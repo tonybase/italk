@@ -1,0 +1,17 @@
+# iqq working dir
+/iqq.log*
+/user
+
+# Build artifacts
+artifacts
+target
+classes
+
+# IDE & module files
+.idea
+*.iml
+.project
+.settings
+.classpath
+workspace.xml
+

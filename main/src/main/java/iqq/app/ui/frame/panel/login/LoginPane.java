@@ -158,7 +158,7 @@ public class LoginPane extends IMContentPane {
             @Override
             public void actionPerformed(ActionEvent e) {
                 IMAccount account = new IMAccount();
-                account.setLoginName(accountCbx.getSelectedItem().toString());
+                account.setAccount(accountCbx.getSelectedItem().toString());
                 account.setPassword(new String(pwdFld.getPassword()));
                 account.setRememberPwd(rePwdCkb.isSelected());
                 frame.login(account);

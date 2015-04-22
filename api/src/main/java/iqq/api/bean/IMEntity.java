@@ -11,16 +11,16 @@ import java.io.Serializable;
  * To change this template use File | Settings | File Templates.
  */
 public class IMEntity implements Serializable {
-    private long id;
+    private String id;
     private String nick;
     private String sign;
     private BufferedImage avatar;
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -46,5 +46,15 @@ public class IMEntity implements Serializable {
 
     public void setAvatar(BufferedImage avatar) {
         this.avatar = avatar;
+    }
+
+    @Override
+    public String toString() {
+        return "IMEntity{" +
+                "id=" + id +
+                ", nick='" + nick + '\'' +
+                ", sign='" + sign + '\'' +
+                ", avatar=" + avatar +
+                '}';
     }
 }

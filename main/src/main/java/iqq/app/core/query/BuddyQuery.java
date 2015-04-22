@@ -28,7 +28,7 @@ import java.util.List;
  * License  : Apache License 2.0
  */
 public interface BuddyQuery {
-    public IMBuddy findById(long id);
+    public IMBuddy findById(String id);
 
     public List<IMBuddy> findAll();
 }

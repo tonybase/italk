@@ -7,16 +7,16 @@ package iqq.api.bean;
  * License  : Apache License 2.0
  */
 public class IMAccount extends IMUser {
-    private String loginName;
+    private String account;
     private String password;
     private boolean isRememberPwd;
 
-    public String getLoginName() {
-        return loginName;
+    public String getAccount() {
+        return account;
     }
 
-    public void setLoginName(String loginName) {
-        this.loginName = loginName;
+    public void setAccount(String account) {
+        this.account = account;
     }
 
     public String getPassword() {

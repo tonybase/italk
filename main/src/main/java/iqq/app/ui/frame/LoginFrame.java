@@ -13,7 +13,6 @@ import iqq.app.ui.action.IMActionHandler;
 import iqq.app.ui.event.UIEvent;
 import iqq.app.ui.event.UIEventHandler;
 import iqq.app.ui.event.UIEventType;
-import iqq.app.ui.event.args.LoginInfoParam;
 import iqq.app.ui.frame.panel.login.LoginPane;
 import iqq.app.ui.manager.FrameManager;
 import iqq.app.ui.manager.MainManager;
@@ -75,7 +74,7 @@ public class LoginFrame extends IMFrame {
     @IMActionHandler
     public void login(ActionEvent e, WebComboBox b, WebPasswordField p) {
         IMAccount account = new IMAccount();
-        account.setLoginName(b.getSelectedItem().toString());
+        account.setAccount(b.getSelectedItem().toString());
         account.setPassword(new String(p.getPassword()));
         account.setStatus(IMStatus.ONLINE);
 

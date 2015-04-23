@@ -2,7 +2,7 @@ package iqq.api.bean.content;
 
 /**
  * 聊天表情信息
- * <p>
+ * <p/>
  * Project  : iqq-projects
  * Author   : 承∮诺 < 6208317@qq.com >
  * Created  : 14-5-15
@@ -22,5 +22,11 @@ public class IMFaceItem implements IMContentItem {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    @Override
+    public String toString() {
+        return "[表情 " + key + "]";
+
     }
 }

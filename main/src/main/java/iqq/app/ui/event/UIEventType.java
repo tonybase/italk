@@ -143,6 +143,7 @@ public enum UIEventType {
     /**
      * *****聊天消息部分**********
      */
+    CREATE_CHAT_REQUEST,    //请求发送消息
     SEND_MSG_REQUEST,    //请求发送消息
     SEND_MSG_SUCCESS,    //发送消息成功
     SEND_MSG_ERROR,        //发送消息失败

@@ -96,6 +96,8 @@ public abstract class BasicPanel extends IMPanel {
         update();
 
         getEventService().register(uiEventDispatcher.getEventTypes(), uiEventDispatcher);
+        // 打开了聊天对话
+        getEventService().broadcast(new UIEvent(UIEventType.CREATE_CHAT_REQUEST, entity));
     }
 
     public IMEntity getEntity() {
@@ -211,7 +213,7 @@ public abstract class BasicPanel extends IMPanel {
         msg.setSender(logicModule.getOwner());
         msg.setContents(UIUtils.Bean.toIMItem(richItems));
         msg.setDate(new Date());
-        msg.setState(IMMsg.State.PENDING);
+        msg.setState(IMMsg.State.SENT);
         msg.setDirection(IMMsg.Direction.SEND);
         msg.setOwner(entity);
         showMsg(msg);
@@ -270,7 +272,9 @@ public abstract class BasicPanel extends IMPanel {
     @UIEventHandler(UIEventType.RECV_RAW_MSG)
     public void onRecvMsgEvent(UIEvent uiEvent) {
         IMMsg msg = (IMMsg) uiEvent.getTarget();
-        showMsg(msg);
+        if (msg.getOwner().getId().equals(getEntity().getId())) {
+            showMsg(msg);
+        }
     }
 
     protected EventService getEventService() {

@@ -4,7 +4,7 @@ import java.io.File;
 
 /**
  * 聊天图片信息
- * <p>
+ * <p/>
  * Project  : iqq-projects
  * Author   : 承∮诺 < 6208317@qq.com >
  * Created  : 14-5-15
@@ -24,5 +24,10 @@ public class IMPictureItem implements IMContentItem {
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    @Override
+    public String toString() {
+        return "[图片 " + file + "]";
     }
 }

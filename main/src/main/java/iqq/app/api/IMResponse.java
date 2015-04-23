@@ -1,8 +1,6 @@
 package iqq.app.api;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import iqq.app.util.gson.GsonUtils;
 
 /**
  * Created by Tony on 4/22/15.
@@ -10,7 +8,7 @@ import iqq.app.util.gson.GsonUtils;
 public class IMResponse {
     private int status;
     private String msg;
-    private String data;
+    private JsonObject data;
     private String refer;
 
     public int getStatus() {
@@ -29,11 +27,11 @@ public class IMResponse {
         this.msg = msg;
     }
 
-    public String getData() {
+    public JsonObject getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(JsonObject data) {
         this.data = data;
     }
 
@@ -43,16 +41,6 @@ public class IMResponse {
 
     public void setRefer(String refer) {
         this.refer = refer;
-    }
-
-    public <V> V toBean(Class<V> type) {
-        return GsonUtils.fromJson(data, type);
-    }
-
-    public <V> V toBean(String name, Class<V> type) {
-        JsonParser jsonParser = new JsonParser();
-        JsonObject jsonObject = (JsonObject) jsonParser.parse(data);
-        return GsonUtils.fromJson(jsonObject.get(name).getAsString(), type);
     }
 
     @Override

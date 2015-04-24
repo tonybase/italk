@@ -272,7 +272,7 @@ public abstract class BasicPanel extends IMPanel {
     @UIEventHandler(UIEventType.RECV_RAW_MSG)
     public void onRecvMsgEvent(UIEvent uiEvent) {
         IMMsg msg = (IMMsg) uiEvent.getTarget();
-        if (msg.getOwner().getId().equals(getEntity().getId())) {
+        if (msg.getSender().getId().equals(getEntity().getId())) {
             showMsg(msg);
         }
     }

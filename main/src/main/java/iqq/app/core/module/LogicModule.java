@@ -130,31 +130,36 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
     }
 
     private void contentToServer() {
+        BufferedReader reader = null;
         try {
             client = new Socket("127.0.0.1", 9090);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            while (client.isConnected()) {
+            reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            while (client.isConnected() && !client.isClosed()) {
                 String line = reader.readLine();
-                logger.debug(line);
+                if (line == null) return;
+                logger.debug("data: " + line);
                 try {
                     onReceived(GsonUtils.fromJson(line, IMResponse.class));
                 } catch (Exception e) {
-                    e.printStackTrace();
                     JsonObject object = new JsonParser().parse(line).getAsJsonObject();
                     IMResponse response = new IMResponse();
                     response.setStatus(object.get("status").getAsInt());
                     response.setMsg(object.get("msg").getAsString());
                     response.setRefer(object.get("refer").getAsString());
                     onReceived(response);
-                    break;
                 }
             }
-            reader.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             if (client != null) try {
                 client.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (reader != null) try {
+                reader.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -273,7 +278,7 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
             buddyCategory.setName(cate.get("name").getAsString());
             JsonArray buddiesJson = cate.get("buddies").getAsJsonArray();
             for (int j = 0; j < buddiesJson.size(); j++) {
-                JsonObject buddyJson = buddiesJson.get(i).getAsJsonObject();
+                JsonObject buddyJson = buddiesJson.get(j).getAsJsonObject();
 
                 IMBuddy buddy = new IMBuddy();
                 buddy.setId(buddyJson.get("id").getAsString());

@@ -143,7 +143,6 @@ public enum UIEventType {
     /**
      * *****聊天消息部分**********
      */
-    CREATE_CHAT_REQUEST,    //请求发送消息
     SEND_MSG_REQUEST,    //请求发送消息
     SEND_MSG_SUCCESS,    //发送消息成功
     SEND_MSG_ERROR,        //发送消息失败
@@ -212,7 +211,7 @@ public enum UIEventType {
      */
     SHOW_MAIN_FRAME,        //显示主窗口
     SHOW_CHAT,                //显示聊天对话窗口
-    SHOW_MINI_MSG_BOX,        //显示迷你消息窗口
+    CLOSE_CHAT,                //关闭聊天对话窗口
     SHOW_PIC_PREVIEW,        //显示图片预览窗口
     SHOW_MEMBERS_WINDOW,    //显示群或者讨论组窗口
     SHOW_PROXY_WINDOW,        //显示代理窗口

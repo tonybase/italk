@@ -8,8 +8,11 @@ import iqq.app.ui.frame.panel.chat.rich.UILinkItem;
 import iqq.app.ui.frame.panel.chat.rich.UIRichItem;
 import iqq.app.ui.frame.panel.chat.rich.UITextItem;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -36,6 +39,15 @@ public class UIUtils {
 
         public static ImageIcon getDefaultAvatar() {
             return IMContext.getBean(ResourceServiceImpl.class).getIcon("icons/default/qq_icon.png");
+        }
+
+        public static BufferedImage getDefaultAvatarBuffer() {
+            try {
+                return ImageIO.read(IMContext.getBean(ResourceServiceImpl.class).getFile("icons/default/qq_icon.png"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
 
         public static List<UIRichItem> toRichItem(List<IMContentItem> items) {

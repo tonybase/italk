@@ -14,6 +14,7 @@ import iqq.api.bean.IMEntity;
 import iqq.api.bean.IMMsg;
 import iqq.app.core.context.IMContext;
 import iqq.app.core.module.LogicModule;
+import iqq.app.core.module.MsgModule;
 import iqq.app.core.service.EventService;
 import iqq.app.core.service.SkinService;
 import iqq.app.ui.IMPanel;
@@ -96,8 +97,11 @@ public abstract class BasicPanel extends IMPanel {
         update();
 
         getEventService().register(uiEventDispatcher.getEventTypes(), uiEventDispatcher);
-        // 打开了聊天对话
-        getEventService().broadcast(new UIEvent(UIEventType.CREATE_CHAT_REQUEST, entity));
+        // 加载接收到的消息
+        List<IMMsg> msgs = IMContext.getBean(MsgModule.class).getMsgs(entity.getId());
+        for (IMMsg msg : msgs) {
+            showMsg(msg);
+        }
     }
 
     public IMEntity getEntity() {
@@ -273,6 +277,7 @@ public abstract class BasicPanel extends IMPanel {
     public void onRecvMsgEvent(UIEvent uiEvent) {
         IMMsg msg = (IMMsg) uiEvent.getTarget();
         if (msg.getSender().getId().equals(getEntity().getId())) {
+            msg.setState(IMMsg.State.READ);
             showMsg(msg);
         }
     }

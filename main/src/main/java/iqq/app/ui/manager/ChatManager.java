@@ -4,6 +4,9 @@ import iqq.api.bean.IMBuddy;
 import iqq.api.bean.IMEntity;
 import iqq.api.bean.IMRoom;
 import iqq.api.bean.IMUser;
+import iqq.app.core.service.EventService;
+import iqq.app.ui.event.UIEvent;
+import iqq.app.ui.event.UIEventType;
 import iqq.app.ui.frame.ChatFrame;
 import iqq.app.ui.frame.panel.chat.BasicPanel;
 import iqq.app.ui.frame.panel.chat.RoomPanel;
@@ -12,12 +15,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * 聊天窗口管理类，用于管理聊天对话
- * <p>
+ * <p/>
  * Project  : iqq-projects
  * Author   : 承∮诺 < 6208317@qq.com >
  * Created  : 14-5-12
@@ -28,6 +32,8 @@ public class ChatManager {
     private final Logger LOG = LoggerFactory.getLogger(ChatManager.class);
     private ChatFrame chatFrame;
     private Map<IMEntity, BasicPanel> entityMap;
+    @Resource
+    private EventService eventService;
 
     public void addChat(IMEntity entity) {
         if (chatFrame == null) {
@@ -57,6 +63,9 @@ public class ChatManager {
         if (!chatFrame.isVisible()) {
             chatFrame.setVisible(true);
         }
+
+        // 打开了聊天对话
+        eventService.broadcast(new UIEvent(UIEventType.SHOW_CHAT, entity));
     }
 
     /**
@@ -66,14 +75,18 @@ public class ChatManager {
      */
     public void removeChat(IMEntity entity) {
         entityMap.remove(entity);
+
+        // 关闭了聊天对话
+        eventService.broadcast(new UIEvent(UIEventType.CLOSE_CHAT, entity));
     }
 
     /**
      * 对话窗口已经关闭，进行清除处理
      */
     public void clearChats() {
-        entityMap.clear();
+        for (IMEntity entity : entityMap.keySet()) {
+            removeChat(entity);
+        }
     }
-
 
 }

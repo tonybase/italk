@@ -16,6 +16,10 @@ package iqq.app.core.query;
  * limitations under the License.
  */
 
+import iqq.api.bean.IMMsg;
+
+import java.util.List;
+
 /**
  * QQ消息查询
  * Project  : iqq
@@ -23,5 +27,6 @@ package iqq.app.core.query;
  * Created  : 4/13/14
  * License  : Apache License 2.0
  */
-public class MsgQuery {
+public interface MsgQuery {
+    List<IMMsg> getMsgs(String uid);
 }

@@ -6,6 +6,8 @@ import iqq.api.bean.IMRoom;
 import iqq.app.core.context.IMContext;
 import iqq.app.core.service.SkinService;
 import iqq.app.ui.IMFrame;
+import iqq.app.ui.event.UIEvent;
+import iqq.app.ui.event.UIEventType;
 import iqq.app.ui.frame.panel.chat.BasicPanel;
 import iqq.app.ui.frame.panel.chat.ChatPane;
 import iqq.app.ui.frame.panel.chat.RoomPanel;

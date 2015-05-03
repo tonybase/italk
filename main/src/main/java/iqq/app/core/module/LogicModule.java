@@ -146,6 +146,7 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
                     response.setMsg(object.get("msg").getAsString());
                     response.setRefer(object.get("refer").getAsString());
                     onReceived(response);
+                    break;
                 }
             }
             reader.close();
@@ -213,14 +214,14 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
             msg.setContents(new LinkedList<>());
             msg.getContents().add(new IMTextItem(jsonObject.get("content").getAsString()));
             msg.setDate(new Date());
-            msg.setState(IMMsg.State.SENT);
+            msg.setState(IMMsg.State.UNREAD);
             msg.setDirection(IMMsg.Direction.RECV);
             msg.setOwner(account);
             eventService.broadcast(new UIEvent(UIEventType.RECV_RAW_MSG, msg));
         }
     }
 
-    @UIEventHandler(UIEventType.CREATE_CHAT_REQUEST)
+    @UIEventHandler(UIEventType.SHOW_CHAT)
     private void onCreateChatEvent(UIEvent uiEvent) {
         IMEntity entity = (IMEntity) uiEvent.getTarget();
         String to = entity.getId();

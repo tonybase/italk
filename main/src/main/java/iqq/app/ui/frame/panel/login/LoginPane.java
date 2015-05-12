@@ -117,9 +117,9 @@ public class LoginPane extends IMContentPane {
         left.add(face);
 
         // 账号输入一行
-        String[] items = {"6208317", "917362009"};
+//        String[] items = {"6208317", "917362009"};
         regLbl = new WebLabel(frame.getI18nService().getMessage("login.regAccount"));
-        accountCbx = new WebComboBox(items);
+        accountCbx = new WebComboBox();
         accountCbx.setEditable(true);
         accountCbx.setPreferredSize(dimFld);
 

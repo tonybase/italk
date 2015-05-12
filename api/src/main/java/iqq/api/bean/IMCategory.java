@@ -9,7 +9,16 @@ import java.io.Serializable;
  * License  : Apache License 2.0
  */
 public class IMCategory implements Serializable {
+    private String id;
     private String name;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -17,5 +26,13 @@ public class IMCategory implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "IMCategory{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

@@ -1,5 +1,7 @@
 package iqq.app.ui.frame.panel.main;
 
+import com.alee.laf.menu.WebMenuItem;
+import com.alee.laf.menu.WebPopupMenu;
 import com.alee.laf.scroll.WebScrollPane;
 import com.alee.laf.tabbedpane.TabStretchType;
 import com.alee.laf.tabbedpane.TabbedPaneStyle;
@@ -9,6 +11,7 @@ import iqq.app.core.context.IMContext;
 import iqq.app.core.service.SkinService;
 import iqq.app.ui.IMPanel;
 import iqq.app.ui.IMTree;
+import iqq.app.ui.frame.AddCategoryFrame;
 import iqq.app.ui.frame.MainFrame;
 import iqq.app.ui.manager.ChatManager;
 import iqq.app.ui.renderer.BoddyTreeCellRenderer;
@@ -23,6 +26,8 @@ import javax.imageio.ImageIO;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -34,7 +39,7 @@ import java.util.List;
 /**
  * 主界面，主要是包含了一个Tab控件
  * 显示：好友列表/群/最近列表
- * <p>
+ * <p/>
  * Project  : iqq-projects
  * Author   : 承∮诺 < 6208317@qq.com >
  * Created  : 14-5-8
@@ -56,7 +61,12 @@ public class MiddlePanel extends IMPanel {
     private IMTree contactsTree = new IMTree();
     private IMTree groupsTree = new IMTree();
     private IMTree recentTree = new IMTree();
+    private DefaultTreeModel buddyModel;
+    private DefaultTreeModel groupModel;
+    private DefaultTreeModel recentModel;
+    private CategoryNode selectedCategoryNode;
 
+    WebPopupMenu userPopup = new WebPopupMenu();
 
     /**
      * 树组件的鼠标事件，点击展开，双击打开聊天窗口
@@ -72,105 +82,7 @@ public class MiddlePanel extends IMPanel {
         initBuddy();
         initRoom();
         initRecent();
-    }
-
-    /**
-     * 最近列表
-     */
-    private void initRecent() {
-        recentTree.addMouseListener(treeMouse);
-        // 使用自定义的渲染器
-        recentTree.setCellRenderer(new RecentTreeCellRenderer());
-        WebScrollPane treeScroll = new WebScrollPane(recentTree, false, false);
-        // 背景色
-        treeScroll.getViewport().setBackground(new Color(250, 250, 250));
-        // 滚动速度
-        treeScroll.getVerticalScrollBar().setUnitIncrement(30);
-        treeScroll.setHorizontalScrollBarPolicy(WebScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        recentPanel.add(treeScroll);
-
-        // 测试数据
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-        IMBuddy[] buddys = new IMBuddy[10];
-        int j = 0;
-        for (IMBuddy buddy : buddys) {
-            buddy = new IMBuddy();
-            buddy.setNick("buddy-" + j);
-            buddy.setSign("sing..." + j++);
-            try {
-                File file = frame.getResourceService().getFile("icons/login/avatar2.png");
-                buddy.setAvatar(ImageIO.read(file));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            root.add(new BuddyNode(buddy));
-        }
-        IMRoom[] rooms = new IMRoom[10];
-        int k = 0;
-        for (IMRoom room : rooms) {
-            room = new IMRoom();
-            room.setNick("Room-" + k++);
-            try {
-                File file = frame.getResourceService().getFile("icons/login/group.png");
-                room.setAvatar(ImageIO.read(file));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            root.add(new RoomNode(room));
-        }
-
-        DefaultTreeModel groupModel = new DefaultTreeModel(root);
-        recentTree.setModel(groupModel);
-    }
-
-    /**
-     * 聊天室列表
-     */
-    private void initRoom() {
-        groupsTree.addMouseListener(treeMouse);
-        // 使用自定义的渲染器
-        groupsTree.setCellRenderer(new RoomTreeCellRenderer());
-        WebScrollPane treeScroll = new WebScrollPane(groupsTree, false, false);
-        // 背景色
-        treeScroll.getViewport().setBackground(new Color(250, 250, 250));
-        // 滚动速度
-        treeScroll.getVerticalScrollBar().setUnitIncrement(30);
-        treeScroll.setHorizontalScrollBarPolicy(WebScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        groupPanel.add(treeScroll);
-
-        // 测试数据
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-        IMRoomCategory[] cates = new IMRoomCategory[5];
-        int i = 0;
-        for (IMRoomCategory cate : cates) {
-            cate = new IMRoomCategory();
-            cate.setName("Room Category-" + i++);
-            CategoryNode cateNode = new CategoryNode(cate);
-            root.add(cateNode);
-
-            IMRoom[] rooms = new IMRoom[10];
-            int j = 0;
-            for (IMRoom room : rooms) {
-                room = new IMRoom();
-                room.setNick("Room-" + j++);
-                try {
-                    File file = frame.getResourceService().getFile("icons/login/group.png");
-                    room.setAvatar(ImageIO.read(file));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                cateNode.add(new RoomNode(room));
-            }
-        }
-
-        DefaultTreeModel groupModel = new DefaultTreeModel(root);
-        groupsTree.setModel(groupModel);
+        initPopup();
     }
 
     /**
@@ -187,37 +99,94 @@ public class MiddlePanel extends IMPanel {
         treeScroll.getVerticalScrollBar().setUnitIncrement(30);
         treeScroll.setHorizontalScrollBarPolicy(WebScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         buddyPanel.add(treeScroll);
+    }
 
-        // 测试数据
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-        IMBuddyCategory[] cates = new IMBuddyCategory[10];
-        int i = 0;
-        for (IMBuddyCategory cate : cates) {
-            cate = new IMBuddyCategory();
-            cate.setName("Category-" + i++);
-            CategoryNode cateNode = new CategoryNode(cate);
+    /**
+     * 聊天室列表
+     */
+    private void initRoom() {
+        groupsTree.addMouseListener(treeMouse);
+        // 使用自定义的渲染器
+        groupsTree.setCellRenderer(new RoomTreeCellRenderer());
+        WebScrollPane treeScroll = new WebScrollPane(groupsTree, false, false);
+        // 背景色
+        treeScroll.getViewport().setBackground(new Color(250, 250, 250));
+        // 滚动速度
+        treeScroll.getVerticalScrollBar().setUnitIncrement(30);
+        treeScroll.setHorizontalScrollBarPolicy(WebScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        groupPanel.add(treeScroll);
+    }
 
-            IMBuddy[] buddys = new IMBuddy[30];
-            int j = 0;
-            for (IMBuddy buddy : buddys) {
-                buddy = new IMBuddy();
-                buddy.setNick("buddy-" + j);
-                buddy.setSign("sing..." + j++);
-                try {
-                    File file = frame.getResourceService().getFile("icons/login/avatar2.png");
-                    buddy.setAvatar(ImageIO.read(file));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                cateNode.add(new BuddyNode(buddy));
+    /**
+     * 最近列表
+     */
+    private void initRecent() {
+        recentTree.addMouseListener(treeMouse);
+        // 使用自定义的渲染器
+        recentTree.setCellRenderer(new RecentTreeCellRenderer());
+        WebScrollPane treeScroll = new WebScrollPane(recentTree, false, false);
+        // 背景色
+        treeScroll.getViewport().setBackground(new Color(250, 250, 250));
+        // 滚动速度
+        treeScroll.getVerticalScrollBar().setUnitIncrement(30);
+        treeScroll.setHorizontalScrollBarPolicy(WebScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        recentPanel.add(treeScroll);
+    }
+
+    private void initPopup() {
+        WebMenuItem addCategoryItem = new WebMenuItem("  添加分组  ");
+        WebMenuItem renameCategoryItem = new WebMenuItem("  重名分组  ");
+        WebMenuItem removeCategoryItem = new WebMenuItem("  删除分组  ");
+        userPopup.add(addCategoryItem);
+        userPopup.add(renameCategoryItem);
+        userPopup.add(removeCategoryItem);
+
+        addCategoryItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AddCategoryFrame frame = new AddCategoryFrame(null);
+                frame.setLocation(getLocationOnScreen());
+                frame.setVisible(true);
+                frame.setAddedCallback(new AddCategoryFrame.IAddCategoryCallback() {
+                    @Override
+                    public void onAddedEvent(IMCategory category) {
+                        DefaultMutableTreeNode root = (DefaultMutableTreeNode) buddyModel.getRoot();
+                        IMBuddyCategory cate = new IMBuddyCategory();
+                        cate.setId(category.getId());
+                        cate.setName(category.getName());
+                        root.add(new CategoryNode(cate));
+                        buddyModel.reload();
+                    }
+                });
             }
-            root.add(cateNode);
-        }
-
-        DefaultTreeModel buddyModel = new DefaultTreeModel(root);
-        contactsTree.setModel(buddyModel);
+        });
+        renameCategoryItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final IMCategory category = selectedCategoryNode.getCategory();
+                AddCategoryFrame frame = new AddCategoryFrame(category);
+                frame.setLocation(getLocationOnScreen());
+                frame.setVisible(true);
+                frame.setAddedCallback(new AddCategoryFrame.IAddCategoryCallback() {
+                    @Override
+                    public void onAddedEvent(IMCategory cate) {
+                        category.setName(cate.getName());
+                        buddyModel.reload();
+                    }
+                });
+            }
+        });
+        removeCategoryItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (selectedCategoryNode != null) {
+                    DefaultMutableTreeNode root = (DefaultMutableTreeNode) buddyModel.getRoot();
+                    root.remove(selectedCategoryNode);
+                    buddyModel.reload();
+                }
+                selectedCategoryNode = null;
+            }
+        });
     }
 
     /**
@@ -238,7 +207,6 @@ public class MiddlePanel extends IMPanel {
         mainTab.addTab("", buddyPanel);
         mainTab.addTab("", groupPanel);
         mainTab.addTab("", recentPanel);
-
 
         add(mainTab);
 
@@ -274,10 +242,11 @@ public class MiddlePanel extends IMPanel {
                 }
                 cateNode.add(new BuddyNode(buddy));
             }
+            cateNode.setCategory(cate);
             root.add(cateNode);
         }
 
-        DefaultTreeModel buddyModel = new DefaultTreeModel(root);
+        buddyModel = new DefaultTreeModel(root);
         contactsTree.setModel(buddyModel);
     }
 
@@ -292,10 +261,11 @@ public class MiddlePanel extends IMPanel {
                 }
                 cateNode.add(new RoomNode(room));
             }
+            cateNode.setCategory(cate);
             root.add(cateNode);
         }
 
-        DefaultTreeModel groupModel = new DefaultTreeModel(root);
+        groupModel = new DefaultTreeModel(root);
         groupsTree.setModel(groupModel);
     }
 
@@ -309,8 +279,8 @@ public class MiddlePanel extends IMPanel {
             root.add(new BuddyNode(buddy));
         }
 
-        DefaultTreeModel groupModel = new DefaultTreeModel(root);
-        recentTree.setModel(groupModel);
+        recentModel = new DefaultTreeModel(root);
+        recentTree.setModel(recentModel);
     }
 
     public void updateUserFace(IMUser imUser) {
@@ -370,6 +340,18 @@ public class MiddlePanel extends IMPanel {
                 Object obj = tree.getLastSelectedPathComponent();
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) obj;
                 if (obj instanceof CategoryNode) {
+                    selectedCategoryNode = (CategoryNode) obj;
+                    // 右键显示菜单
+                    if (e.getButton() == 3) {
+                        if (e.isMetaDown()) {
+                            if (!userPopup.isShowing()) {
+                                userPopup.show(e.getComponent(), e.getX() - 25, e.getY() + 8);
+                                userPopup.revalidate();
+                                userPopup.repaint();
+                            }
+                        }
+                        return;
+                    }
                     // 判断是否展开
                     if (!tree.isExpanded(tree.getSelectionPath())) {
                         // 展开

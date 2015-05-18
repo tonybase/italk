@@ -4,6 +4,7 @@ import iqq.api.bean.content.IMContentItem;
 import iqq.api.bean.content.IMTextItem;
 import iqq.app.core.context.IMContext;
 import iqq.app.core.service.impl.ResourceServiceImpl;
+import iqq.app.ui.IMFrame;
 import iqq.app.ui.frame.panel.chat.rich.UILinkItem;
 import iqq.app.ui.frame.panel.chat.rich.UIRichItem;
 import iqq.app.ui.frame.panel.chat.rich.UITextItem;
@@ -99,5 +100,13 @@ public class UIUtils {
 
     public static Dimension getScreenSize() {
         return Toolkit.getDefaultToolkit().getScreenSize();   // 获取屏幕的尺寸
+    }
+
+    public static Point getLocationForCenter(IMFrame frame) {
+        // 居中
+        Dimension screenSize = UIUtils.getScreenSize(); // 获取屏幕的尺寸
+        int screenWidth = screenSize.width / 2;         // 获取屏幕的宽
+        int screenHeight = screenSize.height / 2;       // 获取屏幕的高
+        return new Point(screenWidth - frame.getPreferredSize().width / 2, screenHeight - frame.getPreferredSize().height / 2);
     }
 }

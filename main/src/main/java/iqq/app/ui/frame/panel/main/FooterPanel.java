@@ -3,11 +3,15 @@ package iqq.app.ui.frame.panel.main;
 import com.alee.laf.button.WebButton;
 import com.alee.laf.toolbar.ToolbarStyle;
 import com.alee.laf.toolbar.WebToolBar;
+import iqq.app.core.context.IMContext;
 import iqq.app.core.service.SkinService;
 import iqq.app.ui.IMPanel;
 import iqq.app.ui.frame.MainFrame;
+import iqq.app.ui.manager.FrameManager;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Project  : iqq-projects
@@ -33,6 +37,16 @@ public class FooterPanel extends IMPanel {
 
         initButtons();
         initToolbar();
+        inttAction();
+    }
+
+    private void inttAction() {
+        add.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                IMContext.getBean(FrameManager.class).showAddFriend();
+            }
+        });
     }
 
     private void initButtons() {

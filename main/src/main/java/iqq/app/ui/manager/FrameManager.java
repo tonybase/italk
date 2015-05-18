@@ -1,5 +1,8 @@
 package iqq.app.ui.manager;
 
+import iqq.api.bean.IMCategory;
+import iqq.app.ui.frame.AddCategoryFrame;
+import iqq.app.ui.frame.AddFriendFrame;
 import iqq.app.ui.frame.LoginFrame;
 import iqq.app.ui.frame.VerifyFrame;
 import org.springframework.stereotype.Component;
@@ -12,6 +15,7 @@ public class FrameManager {
 
     private LoginFrame loginFrame = null;
     private VerifyFrame verifyFrame = null;
+    private AddFriendFrame addFriendFrame = null;
 
     public void showLogin() {
         if (loginFrame == null) {
@@ -50,4 +54,18 @@ public class FrameManager {
         }
     }
 
+    public void showAddFriend() {
+        if (addFriendFrame == null) {
+            addFriendFrame = new AddFriendFrame();
+            addFriendFrame.setVisible(true);
+        } else if (!addFriendFrame.isVisible()) {
+            addFriendFrame.setVisible(true);
+        }
+    }
+
+    public void hideAddFriend() {
+        if (addFriendFrame != null) {
+            addFriendFrame.setVisible(false);
+        }
+    }
 }

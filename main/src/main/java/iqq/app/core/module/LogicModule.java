@@ -32,6 +32,7 @@ import iqq.app.ui.event.UIEvent;
 import iqq.app.ui.event.UIEventDispatcher;
 import iqq.app.ui.event.UIEventHandler;
 import iqq.app.ui.event.UIEventType;
+import iqq.app.util.UIUtils;
 import iqq.app.util.gson.GsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,13 +113,16 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
             public void onSuccess(String content) {
                 IMResponse response = GsonUtils.fromJson(content, IMResponse.class);
                 JsonObject jsonObject = response.getData().get("user").getAsJsonObject();
-
                 clientToken = jsonObject.get("token").getAsString();
                 account.setId(jsonObject.get("id").getAsString());
                 account.setNick(jsonObject.get("nick").getAsString());
-                account.setStatus(IMStatus.ONLINE);
+                account.setSign(jsonObject.get("sign").getAsString());
+                
 
+                account.setStatus(IMStatus.ONLINE);
                 contentToServer();
+
+
                 logger.debug("loginSuccess content:" + jsonObject);
             }
 
@@ -205,6 +209,8 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
             sendRequest(request);
         } else if (response.getRefer().equals("GET_BUDDY_LIST_RETURN")) {
             eventService.broadcast(new UIEvent(UIEventType.LOGIN_SUCCESS, account));
+            eventService.broadcast(new UIEvent(UIEventType.SELF_INFO_UPDATE, account));
+            eventService.broadcast(new UIEvent(UIEventType.SELF_SIGN_UPDATE, account));
             onBuddyListRecv(response.getData().get("categories").getAsJsonArray());
         } else if (response.getRefer().equals("CREATE_SESSION_RETURN")) {
             JsonObject jsonObject = response.getData().get("session").getAsJsonObject();

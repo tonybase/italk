@@ -34,15 +34,22 @@ import iqq.app.ui.event.UIEventHandler;
 import iqq.app.ui.event.UIEventType;
 import iqq.app.util.UIUtils;
 import iqq.app.util.gson.GsonUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URL;
 import java.util.*;
+import java.util.List;
 
 //import iqq.im.QQException;
 
@@ -113,11 +120,13 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
             public void onSuccess(String content) {
                 IMResponse response = GsonUtils.fromJson(content, IMResponse.class);
                 JsonObject jsonObject = response.getData().get("user").getAsJsonObject();
+                System.out.println(GsonUtils.toJson(jsonObject));
                 clientToken = jsonObject.get("token").getAsString();
                 account.setId(jsonObject.get("id").getAsString());
                 account.setNick(jsonObject.get("nick").getAsString());
                 account.setSign(jsonObject.get("sign").getAsString());
-                
+
+
 
                 account.setStatus(IMStatus.ONLINE);
                 contentToServer();
@@ -211,6 +220,14 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
             eventService.broadcast(new UIEvent(UIEventType.LOGIN_SUCCESS, account));
             eventService.broadcast(new UIEvent(UIEventType.SELF_INFO_UPDATE, account));
             eventService.broadcast(new UIEvent(UIEventType.SELF_SIGN_UPDATE, account));
+            Image img=null;
+            try {
+                 img=new ImageIcon(IOUtils.toByteArray(new URL("https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superplus/img/logo_white_ee663702.png").openStream())).getImage();
+            }catch (Exception e){
+
+            }
+
+            eventService.broadcast(new UIEvent(UIEventType.SELF_FACE_UPDATE,img));
             onBuddyListRecv(response.getData().get("categories").getAsJsonArray());
         } else if (response.getRefer().equals("CREATE_SESSION_RETURN")) {
             JsonObject jsonObject = response.getData().get("session").getAsJsonObject();

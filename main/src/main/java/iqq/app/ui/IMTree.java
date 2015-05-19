@@ -5,6 +5,7 @@ import com.alee.laf.tree.WebTreeUI;
 import iqq.app.core.service.SkinService;
 import iqq.app.ui.skin.Skin;
 
+import javax.swing.*;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
@@ -36,6 +37,24 @@ public class IMTree extends WebAsyncTree implements Skin {
     class IMTreeUI extends WebTreeUI {
         public Color selectedBg = new Color(240, 220, 147);
         public Color rolloverBg = new Color(178, 212, 243);
+        public Color unonlineBg =new Color(187, 187, 187);
+        /**
+         * 离线时画背景
+         *
+         * @param g2d
+         */
+
+        protected void unonline(Graphics2D g2d) {
+            if (tree.getSelectionCount() > 0) {
+                final java.util.List<Rectangle> selections = getSelectionRects();
+                for (final Rectangle rect : selections) {
+                    g2d.setPaint(unonlineBg);
+                    g2d.fill(new RoundRectangle2D.Double(rect.x + selectionShadeWidth, rect.y + selectionShadeWidth,
+                            rect.width - selectionShadeWidth * 2 - 1, rect.height - selectionShadeWidth * 2 - 1, 0,
+                            0));
+                }
+            }
+        }
 
         /**
          * 选中时画背景

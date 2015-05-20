@@ -107,14 +107,14 @@ public class ChatFrame extends IMFrame {
     }
 
     public void addBuddyPane(IMBuddy buddy, UserPanel entityPanel) {
-        ImageIcon avatar = ImageUtils.createPreviewIcon(buddy.getAvatar(), 18);
+        ImageIcon avatar = ImageUtils.createPreviewIcon(buddy.getAvatarBuffered(), 18);
         tabbedPane.addTab(buddy.getNick(), avatar, entityPanel);
         tabbedPane.setSelectedComponent(entityPanel);
         setTitle(getI18nService().getMessage("conversationTitle", buddy.getNick()));
     }
 
     public void addRoomPane(IMRoom room, RoomPanel entityPanel) {
-        ImageIcon avatar = ImageUtils.createPreviewIcon(room.getAvatar(), 18);
+        ImageIcon avatar = ImageUtils.createPreviewIcon(room.getAvatarBuffered(), 18);
         tabbedPane.addTab(room.getNick(), avatar, entityPanel);
         tabbedPane.setSelectedComponent(entityPanel);
         setTitle(getI18nService().getMessage("conversationTitle", room.getNick()));

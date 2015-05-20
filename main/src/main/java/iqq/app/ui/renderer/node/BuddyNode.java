@@ -69,7 +69,7 @@ public class BuddyNode extends EntityNode {
      */
     public IMPanel getView() {
         if (avatar == null || !avatar.equals(buddy.getAvatar())) {
-            avatar = buddy.getAvatar();
+            avatar = buddy.getAvatarBuffered();
             avatarImage.setIcon(ImageUtils.createPreviewIcon(avatar, 40));
         }
         if (!StringUtils.equals(nickLbl.getText(), buddy.getNick())) {

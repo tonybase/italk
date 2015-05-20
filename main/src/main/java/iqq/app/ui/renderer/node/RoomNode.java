@@ -48,7 +48,7 @@ public class RoomNode extends EntityNode {
             view.setText(room.getNick());
         }
         if (avatar == null || !avatar.equals(room.getAvatar())) {
-            avatar = room.getAvatar();
+            avatar = room.getAvatarBuffered();
             view.setIcon(ImageUtils.createPreviewIcon(avatar, 43));
         }
         return view;

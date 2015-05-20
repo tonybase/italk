@@ -166,9 +166,9 @@ public class MainManager {
     private Image getTrayFace(IMEntity owner) {
         BufferedImage avatar = null;
         if (owner.getAvatar() != null) {
-            avatar = owner.getAvatar();
+            avatar = owner.getAvatarBuffered();
         } else {
-            avatar = UIUtils.Bean.getDefaultAvatarBuffer();
+            avatar = UIUtils.getDefaultAvatarBuffer();
         }
         return avatar.getScaledInstance(32, 32, 100);
     }

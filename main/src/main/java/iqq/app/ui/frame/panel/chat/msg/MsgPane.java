@@ -71,7 +71,7 @@ public class MsgPane extends IMPanel {
         if (msg.getSender().getAvatar() != null) {
             this.avatar = new WebDecoratedImage(new ImageIcon(msg.getSender().getAvatar()));
         } else {
-            this.avatar = new WebDecoratedImage(UIUtils.Bean.getDefaultAvatar());
+            this.avatar = new WebDecoratedImage(UIUtils.getDefaultAvatar());
         }
         initComponent();
         addComponent();
@@ -146,7 +146,7 @@ public class MsgPane extends IMPanel {
         if (msg.getSender().getAvatar() != null) {
             this.avatar.setIcon(new ImageIcon(msg.getSender().getAvatar()));
         } else {
-            this.avatar.setIcon(UIUtils.Bean.getDefaultAvatar());
+            this.avatar.setIcon(UIUtils.getDefaultAvatar());
         }
         //小于一天就显示时间，否则就显示日期
         String time = DATE_FORMAT.format(msg.getDate());

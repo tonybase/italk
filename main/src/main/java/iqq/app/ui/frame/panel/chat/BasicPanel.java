@@ -237,7 +237,7 @@ public abstract class BasicPanel extends IMPanel {
     }
 
     public void update() {
-        ImageIcon icon = ImageUtils.createPreviewIcon(entity.getAvatar(), 40);
+        ImageIcon icon = ImageUtils.createPreviewIcon(entity.getAvatarBuffered(), 40);
         avatarImage.setIcon(icon);
         nickLabel.setText(entity.getNick());
         signLabel.setText(entity.getSign());

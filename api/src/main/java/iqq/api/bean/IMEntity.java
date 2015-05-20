@@ -14,7 +14,8 @@ public class IMEntity implements Serializable {
     private String id;
     private String nick;
     private String sign;
-    private BufferedImage avatar;
+    private String avatar;
+    private BufferedImage avatarBuffered;
 
     public String getId() {
         return id;
@@ -40,21 +41,30 @@ public class IMEntity implements Serializable {
         this.sign = sign;
     }
 
-    public BufferedImage getAvatar() {
+    public String getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(BufferedImage avatar) {
+    public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public BufferedImage getAvatarBuffered() {
+        return avatarBuffered;
+    }
+
+    public void setAvatarBuffered(BufferedImage avatarBuffered) {
+        this.avatarBuffered = avatarBuffered;
     }
 
     @Override
     public String toString() {
         return "IMEntity{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", nick='" + nick + '\'' +
                 ", sign='" + sign + '\'' +
-                ", avatar=" + avatar +
+                ", avatar='" + avatar + '\'' +
+                ", avatarBuffered=" + avatarBuffered +
                 '}';
     }
 }

@@ -238,7 +238,7 @@ public class MiddlePanel extends IMPanel {
             CategoryNode cateNode = new CategoryNode(cate);
             for (IMBuddy buddy : cate.getBuddyList()) {
                 if (buddy.getAvatar() == null) {
-                    buddy.setAvatar(defaultAvatar);
+                    buddy.setAvatarBuffered(defaultAvatar);
                 }
                 cateNode.add(new BuddyNode(buddy));
             }
@@ -257,7 +257,7 @@ public class MiddlePanel extends IMPanel {
             CategoryNode cateNode = new CategoryNode(cate);
             for (IMRoom room : cate.getRoomList()) {
                 if (room.getAvatar() == null) {
-                    room.setAvatar(defaultAvatar);
+                    room.setAvatarBuffered(defaultAvatar);
                 }
                 cateNode.add(new RoomNode(room));
             }
@@ -274,7 +274,7 @@ public class MiddlePanel extends IMPanel {
         BufferedImage defaultAvatar = getDefaultRoomAvatar();
         for (IMBuddy buddy : buddies) {
             if (buddy.getAvatar() == null) {
-                buddy.setAvatar(defaultAvatar);
+                buddy.setAvatarBuffered(defaultAvatar);
             }
             root.add(new BuddyNode(buddy));
         }

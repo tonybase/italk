@@ -138,7 +138,7 @@ public enum UIEventType {
      */
     SELF_INFO_UPDATE,    //个人基本数据更新
     SELF_FACE_UPDATE,    //个人头像更新
-    SELF_SIGN_UPDATE,    //个人签名更新
+//    SELF_SIGN_UPDATE,    //个人签名更新
 
     /**
      * *****聊天消息部分**********

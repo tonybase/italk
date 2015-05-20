@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * 主界面，分为上/中/下的内容面板
- * <p>
+ * <p/>
  * Project  : iqq-projects
  * Author   : 承∮诺 < 6208317@qq.com >
  * Created  : 14-5-4
@@ -63,18 +63,14 @@ public class MainFrame extends IMFrame {
 
     @UIEventHandler(UIEventType.SELF_FACE_UPDATE)
     public void processSelfFaceUpdate(UIEvent uiEvent) {
-        contentPane.getHeaderPanel().updateSelfFace((Image) uiEvent.getTarget());
+        IMUser user = (IMUser) uiEvent.getTarget();
+        contentPane.getHeaderPanel().updateSelfFace(user.getAvatarBuffered());
     }
 
     @UIEventHandler(UIEventType.SELF_INFO_UPDATE)
     public void processSelfInfoUpdate(UIEvent uiEvent) {
         IMUser user = (IMUser) uiEvent.getTarget();
         contentPane.getHeaderPanel().updateSelfNick(user.getNick());
-    }
-
-    @UIEventHandler(UIEventType.SELF_SIGN_UPDATE)
-    public void processSelfSignUpdate(UIEvent uiEvent) {
-        IMUser user = (IMUser) uiEvent.getTarget();
         contentPane.getHeaderPanel().updateSelfSign(user.getSign());
     }
 

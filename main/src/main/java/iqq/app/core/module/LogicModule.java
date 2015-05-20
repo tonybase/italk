@@ -44,6 +44,7 @@ import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.Socket;
@@ -125,7 +126,8 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
                 account.setId(jsonObject.get("id").getAsString());
                 account.setNick(jsonObject.get("nick").getAsString());
                 account.setSign(jsonObject.get("sign").getAsString());
-
+                account.setAvatar(jsonObject.get("avatar").getAsString());
+                account.setAvatarBuffered(UIUtils.getBufferedImage(jsonObject.get("avatar").getAsString()));
 
 
                 account.setStatus(IMStatus.ONLINE);
@@ -219,15 +221,8 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
         } else if (response.getRefer().equals("GET_BUDDY_LIST_RETURN")) {
             eventService.broadcast(new UIEvent(UIEventType.LOGIN_SUCCESS, account));
             eventService.broadcast(new UIEvent(UIEventType.SELF_INFO_UPDATE, account));
-            eventService.broadcast(new UIEvent(UIEventType.SELF_SIGN_UPDATE, account));
-            Image img=null;
-            try {
-                 img=new ImageIcon(IOUtils.toByteArray(new URL("https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superplus/img/logo_white_ee663702.png").openStream())).getImage();
-            }catch (Exception e){
+            eventService.broadcast(new UIEvent(UIEventType.SELF_FACE_UPDATE, account));
 
-            }
-
-            eventService.broadcast(new UIEvent(UIEventType.SELF_FACE_UPDATE,img));
             onBuddyListRecv(response.getData().get("categories").getAsJsonArray());
         } else if (response.getRefer().equals("CREATE_SESSION_RETURN")) {
             JsonObject jsonObject = response.getData().get("session").getAsJsonObject();

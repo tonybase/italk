@@ -33,6 +33,7 @@ import iqq.app.ui.event.UIEvent;
 import iqq.app.ui.event.UIEventDispatcher;
 import iqq.app.ui.event.UIEventHandler;
 import iqq.app.ui.event.UIEventType;
+import iqq.app.util.UIUtils;
 import iqq.app.util.gson.GsonUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -69,13 +70,8 @@ public class AddFriendModule {
     @Resource
     private HttpService httpService;
 
-    private String nick;
-    private Map<String, String> ticketMap = new HashMap<>();
-    private List<IMBuddy> buddies = new LinkedList<>();
-
     @PostConstruct
     public void init() {
-
         UIEventDispatcher uiEventDispatcher = new UIEventDispatcher(this);
         eventService.register(uiEventDispatcher.getEventTypes(), uiEventDispatcher);
     }
@@ -87,24 +83,35 @@ public class AddFriendModule {
      */
     @UIEventHandler(UIEventType.QUERY_FRIEND_BY_NICK)
     private void onLoginEvent(UIEvent uiEvent) {
-        System.out.println("====2=====");
-        nick = (String) uiEvent.getTarget();
+        String nick = (String) uiEvent.getTarget();
+        logger.info("nick: " + nick);
         Map<String, String> map = new HashMap<>();
-        map.put("nick", nick);
+        map.put("nick", nick == null ? "" : nick);
         httpService.doPost("http://127.0.0.1:8080/query", map, new HttpService.StringCallback() {
             @Override
             public void onSuccess(String content) {
+                logger.info(content);
                 IMResponse response = GsonUtils.fromJson(content, IMResponse.class);
-                Type mapType=new TypeToken<Map<String,List<Map<String,String>>>>() {
-                }.getType();
-                String json=GsonUtils.toJson(response.getData());
-                Map<String,List<Map<String,String>>> map=GsonUtils.fromJson(json,mapType);
-                eventService.broadcast(new UIEvent(UIEventType.QUERY_FRIEND_BY_NICK_H, map.get("users")));
+                JsonArray jsonArray = response.getData().get("users").getAsJsonArray();
+                List<IMBuddy> buddies = new LinkedList<>();
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
+
+                    IMBuddy buddy = new IMBuddy();
+                    buddy.setNick(jsonObject.get("id").getAsString());
+                    buddy.setNick(jsonObject.get("nick").getAsString());
+                    buddy.setSign(jsonObject.get("sign").getAsString());
+                    buddy.setAvatar(jsonObject.get("avatar").getAsString());
+                    buddy.setAvatarBuffered(UIUtils.getBufferedImage(jsonObject.get("avatar").getAsString()));
+                    buddies.add(buddy);
+                }
+
+                eventService.broadcast(new UIEvent(UIEventType.QUERY_FRIEND_BY_NICK_H, buddies));
             }
 
             @Override
             public void onFailure(int statusCode, String content) {
-
+                logger.error("statusCode=" + statusCode + " " + content);
             }
         });
     }

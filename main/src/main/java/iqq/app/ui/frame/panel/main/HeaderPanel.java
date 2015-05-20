@@ -17,6 +17,7 @@ import iqq.app.ui.frame.SkinFrame;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 
 /**
  * Project  : iqq-projects
@@ -105,8 +106,8 @@ public class HeaderPanel extends IMPanel {
         this.setPainter(skinService.getPainterByKey("skin/background"));
     }
 
-    public void updateSelfFace(Image face) {
-        avatar.setImage(face);
+    public void updateSelfFace(BufferedImage face) {
+        avatar.setImage(face.getScaledInstance(50, 50, 100));
     }
 
     public void updateSelfSign(String sign) {

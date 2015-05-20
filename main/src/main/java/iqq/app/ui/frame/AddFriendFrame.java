@@ -5,14 +5,12 @@ import com.alee.extended.panel.GroupPanel;
 import com.alee.extended.panel.VerticalPanel;
 import com.alee.laf.button.WebButton;
 import com.alee.laf.label.WebLabel;
-import com.alee.laf.list.WebList;
 import com.alee.laf.panel.WebPanel;
 import com.alee.laf.rootpane.WebFrame;
 import com.alee.laf.scroll.WebScrollPane;
 import com.alee.laf.text.WebTextField;
 import com.alee.laf.tree.WebTree;
 import iqq.api.bean.IMBuddy;
-import iqq.app.core.context.IMContext;
 import iqq.app.core.service.SkinService;
 import iqq.app.ui.IMContentPane;
 import iqq.app.ui.IMFrame;
@@ -20,8 +18,6 @@ import iqq.app.ui.component.TitleComponent;
 import iqq.app.ui.event.UIEvent;
 import iqq.app.ui.event.UIEventHandler;
 import iqq.app.ui.event.UIEventType;
-import iqq.app.ui.manager.FrameManager;
-import iqq.app.ui.manager.MainManager;
 import iqq.app.ui.renderer.RecentTreeCellRenderer;
 import iqq.app.ui.renderer.node.BuddyNode;
 import iqq.app.util.UIUtils;
@@ -38,8 +34,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Tony on 5/18/15.
@@ -56,6 +53,7 @@ public class AddFriendFrame extends IMFrame {
         initUI();
         initContent();
     }
+
     /**
      * 广播 UIEvent
      *
@@ -65,6 +63,7 @@ public class AddFriendFrame extends IMFrame {
     protected void broadcastUIEvent(UIEventType type, Object target) {
         eventService.broadcast(new UIEvent(type, target));
     }
+
     private void initUI() {
         setTitle("添加好友");
         setDefaultCloseOperation(WebFrame.DISPOSE_ON_CLOSE);
@@ -121,25 +120,10 @@ public class AddFriendFrame extends IMFrame {
         middlePanel.add(alignPanel, BorderLayout.PAGE_END);
 
 
-
         findBtn.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                contentPanel.remove(0);
-                contentPanel.add(resultPanel());
-                contentPanel.revalidate();
-
-
-
-
-
-//                for (int i = 0; i < 10; i++) {
-//                    IMBuddy buddy = new IMBuddy();
-//                    buddy.setNick("nick-" + i);
-//                    buddy.setSign("sign-" + i);
-//                    buddies.add(buddy);
-//                }
                 broadcastUIEvent(UIEventType.QUERY_FRIEND_BY_NICK, inputFld.getText());
 
             }
@@ -192,12 +176,12 @@ public class AddFriendFrame extends IMFrame {
         return resultPanel;
     }
 
-    public void updateRecentList(List<IMBuddy> buddies) {
+    public void updateUserList(List<IMBuddy> buddies) {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
         BufferedImage defaultAvatar = getDefaultAvatar();
         for (IMBuddy buddy : buddies) {
             if (buddy.getAvatar() == null) {
-                buddy.setAvatar(defaultAvatar);
+                buddy.setAvatarBuffered(defaultAvatar);
             }
             root.add(new BuddyNode(buddy));
         }
@@ -217,18 +201,19 @@ public class AddFriendFrame extends IMFrame {
         }
         return null;
     }
+
     @UIEventHandler(UIEventType.QUERY_FRIEND_BY_NICK_H)
     public void processGetFriendByNickList(UIEvent uiEvent) {
+        List<IMBuddy> buddies = (List<IMBuddy>) uiEvent.getTarget();
 
-        System.out.println(GsonUtils.toJson(uiEvent));
-        List<Map<String,String>> list= (List<Map<String, String>>) uiEvent.getTarget();
-        for(Map<String,String> map :list){
-                    IMBuddy buddy = new IMBuddy();
-                    buddy.setNick(map.get("nick"));
-                    buddy.setSign(map.get("sign"));
-                    buddies.add(buddy);
+        if (buddies != null && !buddies.isEmpty()) {
+            contentPanel.remove(0);
+            contentPanel.add(resultPanel());
+            contentPanel.revalidate();
+            updateUserList(buddies);
+        } else {
+            // 提示，没有找到
         }
-        updateRecentList(buddies);
 
     }
 }

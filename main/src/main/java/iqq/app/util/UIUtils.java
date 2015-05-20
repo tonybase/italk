@@ -14,6 +14,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -28,28 +29,6 @@ import java.util.regex.Pattern;
 public class UIUtils {
     public static class Bean {
         private static final String LINK_REGXP = "(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
-
-        public static ImageIcon byteToIcon(byte[] imageData) {
-            return byteToIcon(imageData, 40, 40);
-        }
-
-        public static ImageIcon byteToIcon(byte[] imageData, int w, int h) {
-            Image image = Toolkit.getDefaultToolkit().createImage(imageData);
-            return new ImageIcon(image.getScaledInstance(w, h, 100));
-        }
-
-        public static ImageIcon getDefaultAvatar() {
-            return IMContext.getBean(ResourceServiceImpl.class).getIcon("icons/default/qq_icon.png");
-        }
-
-        public static BufferedImage getDefaultAvatarBuffer() {
-            try {
-                return ImageIO.read(IMContext.getBean(ResourceServiceImpl.class).getFile("icons/default/qq_icon.png"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
 
         public static List<UIRichItem> toRichItem(List<IMContentItem> items) {
             List<UIRichItem> contents = new ArrayList<UIRichItem>();
@@ -109,4 +88,41 @@ public class UIUtils {
         int screenHeight = screenSize.height / 2;       // 获取屏幕的高
         return new Point(screenWidth - frame.getPreferredSize().width / 2, screenHeight - frame.getPreferredSize().height / 2);
     }
+
+    public static ImageIcon byteToIcon(byte[] imageData) {
+        return byteToIcon(imageData, 40, 40);
+    }
+
+    public static ImageIcon byteToIcon(byte[] imageData, int w, int h) {
+        Image image = Toolkit.getDefaultToolkit().createImage(imageData);
+        return new ImageIcon(image.getScaledInstance(w, h, 100));
+    }
+
+    public static ImageIcon getDefaultAvatar() {
+        return IMContext.getBean(ResourceServiceImpl.class).getIcon("icons/default/qq_icon.png");
+    }
+
+    public static BufferedImage getDefaultAvatarBuffer() {
+        try {
+            return ImageIO.read(IMContext.getBean(ResourceServiceImpl.class).getFile("icons/default/qq_icon.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 显示图片
+     *
+     * @param url
+     */
+    public static BufferedImage getBufferedImage(String url) {
+        try {
+            return ImageIO.read(new URL(url).openStream());
+        } catch (IOException e) {
+//            e.printStackTrace();
+        }
+        return getDefaultAvatarBuffer();
+    }
+
 }

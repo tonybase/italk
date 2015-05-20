@@ -292,6 +292,7 @@ public class MiddlePanel extends IMPanel {
                 BuddyNode buddyNode = (BuddyNode) categoryNode.getChildAt(j);
                 if (buddyNode.getBuddy().getId() == imUser.getId()) {
                     buddyNode.getBuddy().setAvatar(imUser.getAvatar());
+                    buddyNode.getBuddy().setAvatarBuffered(imUser.getAvatarBuffered());
                     model.reload(buddyNode);
                 }
             }

@@ -7,6 +7,7 @@ import com.alee.laf.label.WebLabel;
 import com.alee.utils.ImageUtils;
 import iqq.api.bean.IMBuddy;
 import iqq.app.ui.IMPanel;
+import iqq.app.util.StatusUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
@@ -14,7 +15,7 @@ import java.awt.image.BufferedImage;
 
 /**
  * 好友显示节点
- * <p>
+ * <p/>
  * Project  : iqq-projects
  * Author   : 承∮诺 < 6208317@qq.com >
  * Created  : 14-5-10
@@ -68,8 +69,8 @@ public class BuddyNode extends EntityNode {
      * @return
      */
     public IMPanel getView() {
-        if (avatar == null || !avatar.equals(buddy.getAvatar())) {
-            avatar = buddy.getAvatarBuffered();
+        if (avatar == null || !avatar.equals(buddy.getAvatarBuffered())) {
+            avatar = StatusUtils.drawStatusFace(buddy);
             avatarImage.setIcon(ImageUtils.createPreviewIcon(avatar, 40));
         }
         if (!StringUtils.equals(nickLbl.getText(), buddy.getNick())) {

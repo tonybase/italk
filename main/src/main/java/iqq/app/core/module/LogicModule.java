@@ -28,6 +28,7 @@ import iqq.app.core.query.BuddyQuery;
 import iqq.app.core.query.GroupQuery;
 import iqq.app.core.service.EventService;
 import iqq.app.core.service.HttpService;
+import iqq.app.core.service.TaskService;
 import iqq.app.ui.event.UIEvent;
 import iqq.app.ui.event.UIEventDispatcher;
 import iqq.app.ui.event.UIEventHandler;
@@ -70,6 +71,9 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
     private EventService eventService;
     @Resource
     private HttpService httpService;
+    @Resource
+    private TaskService taskService;
+
     private IMAccount account;
     private Socket client;
     private String clientKey;
@@ -302,9 +306,21 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
                 buddy.setId(buddyJson.get("id").getAsString());
                 buddy.setNick(buddyJson.get("nick").getAsString());
                 buddy.setSign(buddyJson.get("sign").getAsString());
+                buddy.setStatus(IMStatus.valueOfRaw(buddyJson.get("status").getAsInt()));
+                buddy.setAvatar(buddyJson.get("avatar").getAsString());
                 buddyCategory.getBuddyList().add(buddy);
 
                 buddies.add(buddy);
+
+                // 异步下载头像
+                taskService.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 下载完通知更新头像
+                        buddy.setAvatarBuffered(UIUtils.getBufferedImage(buddy.getAvatar()));
+                        eventService.broadcast(new UIEvent(UIEventType.BUDDY_FACE_UPDATE, buddy));
+                    }
+                });
             }
             imCategories.add(buddyCategory);
         }

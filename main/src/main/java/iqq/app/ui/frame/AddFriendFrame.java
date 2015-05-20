@@ -12,13 +12,20 @@ import com.alee.laf.scroll.WebScrollPane;
 import com.alee.laf.text.WebTextField;
 import com.alee.laf.tree.WebTree;
 import iqq.api.bean.IMBuddy;
+import iqq.app.core.context.IMContext;
 import iqq.app.core.service.SkinService;
 import iqq.app.ui.IMContentPane;
 import iqq.app.ui.IMFrame;
 import iqq.app.ui.component.TitleComponent;
+import iqq.app.ui.event.UIEvent;
+import iqq.app.ui.event.UIEventHandler;
+import iqq.app.ui.event.UIEventType;
+import iqq.app.ui.manager.FrameManager;
+import iqq.app.ui.manager.MainManager;
 import iqq.app.ui.renderer.RecentTreeCellRenderer;
 import iqq.app.ui.renderer.node.BuddyNode;
 import iqq.app.util.UIUtils;
+import iqq.app.util.gson.GsonUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -41,7 +48,7 @@ public class AddFriendFrame extends IMFrame {
     private IMContentPane contentPane = new IMContentPane();
     private WebPanel headerPanel = headerPanel();
     private WebPanel contentPanel = new WebPanel();
-
+    private List<IMBuddy> buddies = new ArrayList<IMBuddy>();
     private WebTree userTree;
     private DefaultTreeModel userModel;
 
@@ -49,7 +56,15 @@ public class AddFriendFrame extends IMFrame {
         initUI();
         initContent();
     }
-
+    /**
+     * 广播 UIEvent
+     *
+     * @param type
+     * @param target
+     */
+    protected void broadcastUIEvent(UIEventType type, Object target) {
+        eventService.broadcast(new UIEvent(type, target));
+    }
     private void initUI() {
         setTitle("添加好友");
         setDefaultCloseOperation(WebFrame.DISPOSE_ON_CLOSE);
@@ -105,21 +120,28 @@ public class AddFriendFrame extends IMFrame {
         alignPanel.setMargin(20);
         middlePanel.add(alignPanel, BorderLayout.PAGE_END);
 
+
+
         findBtn.addActionListener(new ActionListener() {
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 contentPanel.remove(0);
                 contentPanel.add(resultPanel());
                 contentPanel.revalidate();
 
-                List<IMBuddy> buddies = new ArrayList<IMBuddy>();
-                for (int i = 0; i < 10; i++) {
-                    IMBuddy buddy = new IMBuddy();
-                    buddy.setNick("nick-" + i);
-                    buddy.setSign("sign-" + i);
-                    buddies.add(buddy);
-                }
-                updateRecentList(buddies);
+
+
+
+
+//                for (int i = 0; i < 10; i++) {
+//                    IMBuddy buddy = new IMBuddy();
+//                    buddy.setNick("nick-" + i);
+//                    buddy.setSign("sign-" + i);
+//                    buddies.add(buddy);
+//                }
+                broadcastUIEvent(UIEventType.QUERY_FRIEND_BY_NICK, inputFld.getText());
+
             }
         });
         return middlePanel;
@@ -194,5 +216,19 @@ public class AddFriendFrame extends IMFrame {
             e.printStackTrace();
         }
         return null;
+    }
+    @UIEventHandler(UIEventType.QUERY_FRIEND_BY_NICK_H)
+    public void processGetFriendByNickList(UIEvent uiEvent) {
+
+        System.out.println(GsonUtils.toJson(uiEvent));
+        List<Map<String,String>> list= (List<Map<String, String>>) uiEvent.getTarget();
+        for(Map<String,String> map :list){
+                    IMBuddy buddy = new IMBuddy();
+                    buddy.setNick(map.get("nick"));
+                    buddy.setSign(map.get("sign"));
+                    buddies.add(buddy);
+        }
+        updateRecentList(buddies);
+
     }
 }

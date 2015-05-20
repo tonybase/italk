@@ -204,8 +204,8 @@ public enum UIEventType {
     QUERY_FRIEND_BY_UIN,    //通过UIN查找好友
     QUERY_ACCOUNT,            //查询登录帐号
     QUERY_SELF_IS_ONLINE,    //查询客户端是否在线
-
-
+    QUERY_FRIEND_BY_NICK,//通过昵称查询好友
+    QUERY_FRIEND_BY_NICK_H,
     /**
      * *****窗口显示******
      */

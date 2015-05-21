@@ -82,7 +82,7 @@ public class AddFriendModule {
      * @param uiEvent
      */
     @UIEventHandler(UIEventType.QUERY_FRIEND_BY_NICK)
-    private void onLoginEvent(UIEvent uiEvent) {
+    private void queryFriendEvent(UIEvent uiEvent) {
         String nick = (String) uiEvent.getTarget();
         logger.info("nick: " + nick);
         Map<String, String> map = new HashMap<>();

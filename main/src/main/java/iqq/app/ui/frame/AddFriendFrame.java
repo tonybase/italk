@@ -24,6 +24,7 @@ import iqq.app.ui.event.UIEventType;
 import iqq.app.ui.manager.FrameManager;
 import iqq.app.ui.renderer.RecentTreeCellRenderer;
 import iqq.app.ui.renderer.node.BuddyNode;
+import iqq.app.ui.renderer.node.CategoryNode;
 import iqq.app.util.UIUtils;
 import iqq.app.util.gson.GsonUtils;
 
@@ -230,10 +231,19 @@ public class AddFriendFrame extends IMFrame {
         }
     }
 
-    @UIEventHandler(UIEventType.USER_STATUS_UPDATE)
+    @UIEventHandler(UIEventType.USER_FACE_UPDATE)
     public void processStatusUpdate(UIEvent uiEvent) {
         IMBuddy buddy = (IMBuddy) uiEvent.getTarget();
 
-        userModel.reload();
+        DefaultTreeModel model = (DefaultTreeModel) userTree.getModel();
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+        for (int i = 0; i < root.getChildCount(); i++) {
+            BuddyNode buddyNode = (BuddyNode) root.getChildAt(i);
+            if (buddyNode.getBuddy().getId() == buddy.getId()) {
+                buddyNode.getBuddy().setAvatarBuffered(buddy.getAvatarBuffered());
+                buddyNode.setAvatar(buddy.getAvatarBuffered());
+                model.reload(buddyNode);
+            }
+        }
     }
 }

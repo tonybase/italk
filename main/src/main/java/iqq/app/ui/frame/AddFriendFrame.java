@@ -177,15 +177,12 @@ public class AddFriendFrame extends IMFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                BuddyNode  buddyNode= (BuddyNode)userTree.getLastSelectedPathComponent();
-                if(buddyNode!=null){
+                BuddyNode buddyNode = (BuddyNode) userTree.getLastSelectedPathComponent();
+                if (buddyNode != null) {
                     IMContext.getBean(FrameManager.class).showChooseCate();
-                }else
-                {
+                } else {
                     //提醒 未选择分组
                 }
-
-
 
 
             }
@@ -231,6 +228,12 @@ public class AddFriendFrame extends IMFrame {
         } else {
             // 提示，没有找到
         }
+    }
 
+    @UIEventHandler(UIEventType.USER_STATUS_UPDATE)
+    public void processStatusUpdate(UIEvent uiEvent) {
+        IMBuddy buddy = (IMBuddy) uiEvent.getTarget();
+
+        userModel.reload();
     }
 }

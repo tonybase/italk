@@ -78,7 +78,7 @@ public enum UIEventType {
     /**
      * ****好友（普通用户,自己）信息更新*****
      */
-    BUDDY_FACE_UPDATE,    //好友头像更新
+    USER_FACE_UPDATE,    //好友头像更新
     BUDDY_UIN_UPDATE,    //好友的QQ号更新
     BUDDY_SIGN_UPDATE,//好友签名更新（貌似改了签名之后webqq不会更新）
     GROUP_FACE_UPDATE, //群头像更新

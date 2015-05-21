@@ -56,8 +56,8 @@ public class BuddyNode extends EntityNode {
     }
 
     public void setAvatar(BufferedImage avatar) {
-        this.avatar = StatusUtils.drawStatusFace(buddy.getStatus(), avatar);
-        this.avatarImage.setIcon(ImageUtils.createPreviewIcon(this.avatar, 45));
+        this.avatar = avatar;
+        this.avatarImage.setIcon(ImageUtils.createPreviewIcon(StatusUtils.drawStatusFace(buddy.getStatus(), avatar), 45));
     }
 
     public IMBuddy getBuddy() {
@@ -74,7 +74,7 @@ public class BuddyNode extends EntityNode {
      * @return
      */
     public IMPanel getView() {
-        if (avatar == null) {
+        if (avatar == null || avatar != buddy.getAvatarBuffered()) {
             setAvatar(buddy.getAvatarBuffered());
         }
         if (!StringUtils.equals(nickLbl.getText(), buddy.getNick())) {

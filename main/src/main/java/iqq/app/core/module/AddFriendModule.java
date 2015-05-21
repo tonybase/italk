@@ -29,6 +29,7 @@ import iqq.app.core.query.BuddyQuery;
 import iqq.app.core.query.GroupQuery;
 import iqq.app.core.service.EventService;
 import iqq.app.core.service.HttpService;
+import iqq.app.core.service.TaskService;
 import iqq.app.ui.event.UIEvent;
 import iqq.app.ui.event.UIEventDispatcher;
 import iqq.app.ui.event.UIEventHandler;
@@ -69,6 +70,8 @@ public class AddFriendModule {
     private EventService eventService;
     @Resource
     private HttpService httpService;
+    @Resource
+    private TaskService taskService;
 
     @PostConstruct
     public void init() {
@@ -101,8 +104,16 @@ public class AddFriendModule {
                     buddy.setNick(jsonObject.get("nick").getAsString());
                     buddy.setSign(jsonObject.get("sign").getAsString());
                     buddy.setAvatar(jsonObject.get("avatar").getAsString());
-                    buddy.setAvatarBuffered(UIUtils.getBufferedImage(jsonObject.get("avatar").getAsString()));
+                    buddy.setAvatarBuffered(UIUtils.getDefaultAvatarBuffer());
                     buddies.add(buddy);
+
+                    taskService.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            buddy.setAvatarBuffered(UIUtils.getBufferedImage(jsonObject.get("avatar").getAsString()));
+                            eventService.broadcast(new UIEvent(UIEventType.USER_FACE_UPDATE, buddy));
+                        }
+                    });
                 }
 
                 eventService.broadcast(new UIEvent(UIEventType.QUERY_FRIEND_BY_NICK_H, buddies));

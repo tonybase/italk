@@ -80,7 +80,7 @@ public class MainFrame extends IMFrame {
         contentPane.getMiddlePanel().updateBuddyList(imCategories);
     }
 
-    @UIEventHandler(UIEventType.BUDDY_FACE_UPDATE)
+    @UIEventHandler(UIEventType.USER_FACE_UPDATE)
     public void processUserFaceUpdate(UIEvent uiEvent) {
         IMUser imUser = (IMUser) uiEvent.getTarget();
         contentPane.getMiddlePanel().updateUserFace(imUser);

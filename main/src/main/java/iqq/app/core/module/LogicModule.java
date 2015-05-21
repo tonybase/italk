@@ -35,21 +35,14 @@ import iqq.app.ui.event.UIEventHandler;
 import iqq.app.ui.event.UIEventType;
 import iqq.app.util.UIUtils;
 import iqq.app.util.gson.GsonUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.Socket;
-import java.net.URL;
 import java.util.*;
 import java.util.List;
 
@@ -331,7 +324,7 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
                     public void run() {
                         // 下载完通知更新头像
                         buddy.setAvatarBuffered(UIUtils.getBufferedImage(buddy.getAvatar()));
-                        eventService.broadcast(new UIEvent(UIEventType.BUDDY_FACE_UPDATE, buddy));
+                        eventService.broadcast(new UIEvent(UIEventType.USER_FACE_UPDATE, buddy));
                     }
                 });
             }

@@ -73,7 +73,6 @@ public class ChatFrame extends IMFrame {
         }
     }
 
-
     private void initTabListener() {
         tabbedPane.addChangeListener(new ChangeListener() {
             @Override

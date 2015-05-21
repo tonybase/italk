@@ -32,6 +32,7 @@ import com.alee.extended.panel.WrapPanel;
 import com.alee.laf.WebLookAndFeel;
 import com.alee.laf.label.WebLabel;
 import com.alee.laf.panel.WebPanel;
+import com.alee.utils.ImageUtils;
 import iqq.api.bean.IMMsg;
 import iqq.app.core.context.IMContext;
 import iqq.app.core.service.I18nService;
@@ -68,8 +69,8 @@ public class MsgPane extends IMPanel {
         } else {
             isSelfMsg = false;
         }
-        if (msg.getSender().getAvatar() != null) {
-            this.avatar = new WebDecoratedImage(new ImageIcon(msg.getSender().getAvatar()));
+        if (msg.getSender().getAvatarBuffered() != null) {
+            this.avatar = new WebDecoratedImage(ImageUtils.createPreviewIcon(msg.getSender().getAvatarBuffered(), 40));
         } else {
             this.avatar = new WebDecoratedImage(UIUtils.getDefaultAvatar());
         }
@@ -143,8 +144,8 @@ public class MsgPane extends IMPanel {
 
     @Override
     public void invalidate() {
-        if (msg.getSender().getAvatar() != null) {
-            this.avatar.setIcon(new ImageIcon(msg.getSender().getAvatar()));
+        if (msg.getSender().getAvatarBuffered() != null) {
+            this.avatar.setIcon(ImageUtils.createPreviewIcon(msg.getSender().getAvatarBuffered(), 40));
         } else {
             this.avatar.setIcon(UIUtils.getDefaultAvatar());
         }

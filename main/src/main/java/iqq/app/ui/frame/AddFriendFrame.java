@@ -1,5 +1,6 @@
 package iqq.app.ui.frame;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.alee.extended.panel.AlignPanel;
 import com.alee.extended.panel.GroupPanel;
 import com.alee.extended.panel.VerticalPanel;
@@ -11,6 +12,8 @@ import com.alee.laf.scroll.WebScrollPane;
 import com.alee.laf.text.WebTextField;
 import com.alee.laf.tree.WebTree;
 import iqq.api.bean.IMBuddy;
+import iqq.api.bean.IMUser;
+import iqq.app.core.context.IMContext;
 import iqq.app.core.service.SkinService;
 import iqq.app.ui.IMContentPane;
 import iqq.app.ui.IMFrame;
@@ -18,6 +21,7 @@ import iqq.app.ui.component.TitleComponent;
 import iqq.app.ui.event.UIEvent;
 import iqq.app.ui.event.UIEventHandler;
 import iqq.app.ui.event.UIEventType;
+import iqq.app.ui.manager.FrameManager;
 import iqq.app.ui.renderer.RecentTreeCellRenderer;
 import iqq.app.ui.renderer.node.BuddyNode;
 import iqq.app.util.UIUtils;
@@ -25,6 +29,8 @@ import iqq.app.util.gson.GsonUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
@@ -170,6 +176,17 @@ public class AddFriendFrame extends IMFrame {
         addBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                BuddyNode  buddyNode= (BuddyNode)userTree.getLastSelectedPathComponent();
+                if(buddyNode!=null){
+                    IMContext.getBean(FrameManager.class).showChooseCate();
+                }else
+                {
+                    //提醒 未选择分组
+                }
+
+
+
 
             }
         });

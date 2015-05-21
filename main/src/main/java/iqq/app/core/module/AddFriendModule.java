@@ -96,9 +96,8 @@ public class AddFriendModule {
                 List<IMBuddy> buddies = new LinkedList<>();
                 for (int i = 0; i < jsonArray.size(); i++) {
                     JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
-
                     IMBuddy buddy = new IMBuddy();
-                    buddy.setNick(jsonObject.get("id").getAsString());
+                    buddy.setId(jsonObject.get("id").getAsString());
                     buddy.setNick(jsonObject.get("nick").getAsString());
                     buddy.setSign(jsonObject.get("sign").getAsString());
                     buddy.setAvatar(jsonObject.get("avatar").getAsString());

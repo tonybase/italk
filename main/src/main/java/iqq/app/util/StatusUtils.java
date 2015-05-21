@@ -32,9 +32,10 @@ public class StatusUtils {
      * 最后，打开群的成员下载也卡，用起来也爽YY了
      * 如果有朋友有什么优化建议的一定要说啊
      */
-    public static BufferedImage drawStatusFace(IMUser user) {
-        BufferedImage face = user.getAvatarBuffered();
-        BufferedImage def_face = statusCache.get("defaultFace");
+    public static BufferedImage drawStatusFace(IMStatus status, BufferedImage face) {
+        LOG.info("drawStatusFace:" + status);
+        
+        BufferedImage def_face = statusCache.get("def_face");
         if (face == null) {
             face = def_face;
             if (face == null) {
@@ -43,7 +44,6 @@ public class StatusUtils {
             }
         }
 
-        IMStatus status = user.getStatus();
         if (status == null) {
             status = IMStatus.OFFLINE;
         }
@@ -104,7 +104,6 @@ public class StatusUtils {
         g2d.dispose();
         return canvas;
     }
-
 
     public static BufferedImage cacheStatusIcon(String status) {
         BufferedImage statusIcon = statusCache.get(status);

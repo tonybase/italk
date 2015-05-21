@@ -299,6 +299,23 @@ public class MiddlePanel extends IMPanel {
         }
     }
 
+    public void updateUserStatus(IMUser imUser) {
+        DefaultTreeModel model = (DefaultTreeModel) contactsTree.getModel();
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+        for (int i = 0; i < root.getChildCount(); i++) {
+            CategoryNode categoryNode = (CategoryNode) root.getChildAt(i);
+            for (int j = 0; j < categoryNode.getChildCount(); j++) {
+                BuddyNode buddyNode = (BuddyNode) categoryNode.getChildAt(j);
+                if (buddyNode.getBuddy().getId() == imUser.getId()) {
+                    buddyNode.getBuddy().setStatus(imUser.getStatus());
+                    buddyNode.getBuddy().setAvatarBuffered(imUser.getAvatarBuffered());
+                    buddyNode.setAvatar(imUser.getAvatarBuffered());
+                    model.reload(buddyNode);
+                }
+            }
+        }
+    }
+
     private BufferedImage getDefaultAvatar() {
         try {
             File file = frame.getResourceService().getFile("icons/login/avatar2.png");

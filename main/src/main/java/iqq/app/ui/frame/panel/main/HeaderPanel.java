@@ -13,6 +13,7 @@ import iqq.app.ui.component.StatusButton;
 import iqq.app.ui.component.TitleComponent;
 import iqq.app.ui.frame.MainFrame;
 import iqq.app.ui.frame.SkinFrame;
+import iqq.app.util.UIUtils;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

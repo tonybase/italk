@@ -130,13 +130,20 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
                 account.setId(jsonObject.get("id").getAsString());
                 account.setNick(jsonObject.get("nick").getAsString());
                 account.setSign(jsonObject.get("sign").getAsString());
+                account.setStatus(IMStatus.valueOfRaw(jsonObject.get("status").getAsInt()));
                 account.setAvatar(jsonObject.get("avatar").getAsString());
-                account.setAvatarBuffered(UIUtils.getBufferedImage(jsonObject.get("avatar").getAsString()));
+                account.setAvatarBuffered(UIUtils.getDefaultAvatarBuffer());
 
+                taskService.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        account.setAvatarBuffered(UIUtils.getBufferedImage(jsonObject.get("avatar").getAsString()));
+                        eventService.broadcast(new UIEvent(UIEventType.SELF_FACE_UPDATE, account));
+                    }
+                });
 
                 account.setStatus(IMStatus.ONLINE);
                 contentToServer();
-
 
                 logger.debug("loginSuccess content:" + jsonObject);
             }
@@ -245,6 +252,11 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
             msg.setDirection(IMMsg.Direction.RECV);
             msg.setOwner(account);
             eventService.broadcast(new UIEvent(UIEventType.RECV_RAW_MSG, msg));
+        } else if (response.getRefer().equals("PUSH_STATUS_CHANGE")) {
+            JsonObject jsonObject = response.getData().get("user").getAsJsonObject();
+            IMBuddy buddy = findById(jsonObject.get("id").getAsString());
+            buddy.setStatus(IMStatus.valueOfRaw(jsonObject.get("state").getAsInt()));
+            eventService.broadcast(new UIEvent(UIEventType.USER_STATUS_UPDATE, buddy));
         }
     }
 
@@ -308,6 +320,7 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
                 buddy.setSign(buddyJson.get("sign").getAsString());
                 buddy.setStatus(IMStatus.valueOfRaw(buddyJson.get("status").getAsInt()));
                 buddy.setAvatar(buddyJson.get("avatar").getAsString());
+                buddy.setAvatarBuffered(UIUtils.getDefaultAvatarBuffer());
                 buddyCategory.getBuddyList().add(buddy);
 
                 buddies.add(buddy);

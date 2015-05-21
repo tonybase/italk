@@ -97,4 +97,10 @@ public class MainFrame extends IMFrame {
         List<IMBuddy> buddies = (List<IMBuddy>) uiEvent.getTarget();
         contentPane.getMiddlePanel().updateRecentList(buddies);
     }
+
+    @UIEventHandler(UIEventType.USER_STATUS_UPDATE)
+    public void processStatusUpdate(UIEvent uiEvent) {
+        IMBuddy buddy = (IMBuddy) uiEvent.getTarget();
+        contentPane.getMiddlePanel().updateUserStatus(buddy);
+    }
 }

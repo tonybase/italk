@@ -104,6 +104,7 @@ public class AddFriendModule {
                     buddy.setNick(jsonObject.get("nick").getAsString());
                     buddy.setSign(jsonObject.get("sign").getAsString());
                     buddy.setAvatar(jsonObject.get("avatar").getAsString());
+                    buddy.setStatus((IMStatus.valueOfRaw(jsonObject.get("status").getAsInt())));
                     buddy.setAvatarBuffered(UIUtils.getDefaultAvatarBuffer());
                     buddies.add(buddy);
 

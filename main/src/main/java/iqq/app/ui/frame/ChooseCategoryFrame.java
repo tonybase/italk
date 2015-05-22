@@ -132,15 +132,12 @@ public class ChooseCategoryFrame extends IMFrame {
         for(IMCategory category:categories){
             comboBox.addItem(category);
         }
-
-        comboBox.setPreferredSize(100,32);
-
+        comboBox.setPreferredSize(80,25);
         confirmBtn.setPreferredSize(60, 30);
         cancelBtn.setPreferredSize(60, 30);
         GroupPanel buttons = new GroupPanel(10, true, confirmBtn, cancelBtn);
         VerticalPanel verticalPanel = new VerticalPanel(label, comboBox);
-        verticalPanel.setMargin(new Insets(20, 20, 20, 20));
-
+        verticalPanel.setMargin(new Insets(10, 20, 20, 20));
         buttons.setMargin(10, 5, 0, 6);
         chooseCatePanel.add(verticalPanel,BorderLayout.PAGE_START);
         chooseCatePanel.add(new AlignPanel(buttons, SwingConstants.RIGHT, SwingConstants.CENTER), BorderLayout.PAGE_END);
@@ -148,6 +145,7 @@ public class ChooseCategoryFrame extends IMFrame {
         cancelBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+               dispose();
 
             }
         });

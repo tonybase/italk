@@ -8,7 +8,7 @@ import iqq.app.ui.renderer.node.CategoryNode;
 import javax.swing.*;
 import java.awt.*;
 
-public class CategoryComboxCellRenderer extends JLabel implements ListCellRenderer {
+public class CategoryComboxCellRenderer extends WebLabel implements ListCellRenderer {
 
     public CategoryComboxCellRenderer() {
         setOpaque(true);

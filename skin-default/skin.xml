@@ -15,7 +15,8 @@
 		<titleColor>#FFFFFF</titleColor>  
 		<titleIcon>window/icons/title_icon.png</titleIcon>  
 		<titleWIcon>window/icons/title_w_icon.png</titleWIcon>  
-		<skin>window/icons/skin.png</skin>  
+		<titleWIconBlack>window/icons/title_w_icon_black.png</titleWIconBlack>
+		<skin>window/icons/skin.png</skin>
 		<skinActive>window/icons/skin_active.png</skinActive>  
 		<setting>window/icons/setting.png</setting>  
 		<settingActive>window/icons/setting_active.png</settingActive>  

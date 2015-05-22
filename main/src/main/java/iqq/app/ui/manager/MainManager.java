@@ -1,8 +1,10 @@
 package iqq.app.ui.manager;
 
+import com.alee.utils.SystemUtils;
 import iqq.api.bean.IMEntity;
 import iqq.app.core.service.EventService;
 import iqq.app.core.service.ResourceService;
+import iqq.app.core.service.SkinService;
 import iqq.app.core.service.TimerService;
 import iqq.app.ui.event.UIEvent;
 import iqq.app.ui.event.UIEventDispatcher;
@@ -50,6 +52,8 @@ public class MainManager {
     private EventService eventService;
     @Resource
     private ResourceService resourceService;
+    @Resource
+    private SkinService skinService;
     @Resource
     private TimerService timerService;
 
@@ -116,14 +120,14 @@ public class MainManager {
     public void enableTray() {
         if (SystemTray.isSupported() && tray == null) {
             menu = new PopupMenu();
-            MenuItem restore = new MenuItem("  Restore  ");
+            MenuItem restore = new MenuItem("  显示主窗口  ");
             restore.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     show();
                 }
             });
-            MenuItem exit = new MenuItem("  Exit  ");
+            MenuItem exit = new MenuItem("  退出程序  ");
             exit.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -131,14 +135,21 @@ public class MainManager {
                 }
             });
             menu.add(restore);
+            menu.addSeparator();
             menu.add(exit);
 
-            defaultImage = mainFrame.getIconImage();
+            if (SystemUtils.isMac()) {
+                defaultImage = skinService.getIconByKey("window/titleWIconBlack").getImage();
+            } else {
+                defaultImage = mainFrame.getIconImage();
+            }
             blankImage = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
             tray = SystemTray.getSystemTray();
             icon = new TrayIcon(defaultImage, "IQQ");
             icon.setImageAutoSize(true);
-            icon.setPopupMenu(menu);
+            if (!SystemUtils.isMac()) {
+                icon.setPopupMenu(menu);
+            }
             try {
                 tray.add(icon);
                 icon.addMouseListener(new MouseAdapter() {

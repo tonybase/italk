@@ -1,6 +1,8 @@
 package iqq.app.api;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import iqq.app.util.gson.GsonUtils;
 
 /**
  * Created by Tony on 4/22/15.
@@ -41,6 +43,19 @@ public class IMResponse {
 
     public void setRefer(String refer) {
         this.refer = refer;
+    }
+
+    public static IMResponse parseJson(String json) {
+        try {
+            return GsonUtils.fromJson(json, IMResponse.class);
+        } catch (Exception e) {
+            JsonObject object = new JsonParser().parse(json).getAsJsonObject();
+            IMResponse response = new IMResponse();
+            response.setStatus(object.get("status").getAsInt());
+            response.setMsg(object.get("msg").getAsString());
+            response.setRefer(object.get("refer").getAsString());
+            return response;
+        }
     }
 
     @Override

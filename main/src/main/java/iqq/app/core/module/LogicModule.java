@@ -116,7 +116,11 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
         httpService.doPost("http://127.0.0.1:8080/login", map, new HttpService.StringCallback() {
             @Override
             public void onSuccess(String content) {
-                IMResponse response = GsonUtils.fromJson(content, IMResponse.class);
+                IMResponse response = IMResponse.parseJson(content);
+                if (response.getStatus() != 0) {
+                    eventService.broadcast(new UIEvent(UIEventType.LOGIN_ERROR, response.getMsg()));
+                    return;
+                }
                 JsonObject jsonObject = response.getData().get("user").getAsJsonObject();
                 System.out.println(GsonUtils.toJson(jsonObject));
                 clientToken = jsonObject.get("token").getAsString();
@@ -157,16 +161,7 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
                 String line = reader.readLine();
                 if (line == null) return;
                 logger.debug("data: " + line);
-                try {
-                    onReceived(GsonUtils.fromJson(line, IMResponse.class));
-                } catch (Exception e) {
-                    JsonObject object = new JsonParser().parse(line).getAsJsonObject();
-                    IMResponse response = new IMResponse();
-                    response.setStatus(object.get("status").getAsInt());
-                    response.setMsg(object.get("msg").getAsString());
-                    response.setRefer(object.get("refer").getAsString());
-                    onReceived(response);
-                }
+                onReceived(IMResponse.parseJson(line));
             }
 
         } catch (IOException e) {

@@ -73,6 +73,14 @@ public class LoginFrame extends IMFrame {
 
     @IMActionHandler
     public void login(ActionEvent e, WebComboBox b, WebPasswordField p) {
+        if (b.getSelectedItem() == null || b.getSelectedItem().toString() == null) {
+            WebOptionPane.showMessageDialog(contentPane, "登陆失败：账号不能为空", "提示", WebOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        if (p.getPassword() == null || p.getPassword().length == 0) {
+            WebOptionPane.showMessageDialog(contentPane, "登陆失败：密码不能为空", "提示", WebOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
         IMAccount account = new IMAccount();
         account.setAccount(b.getSelectedItem().toString());
         account.setPassword(new String(p.getPassword()));
@@ -83,7 +91,7 @@ public class LoginFrame extends IMFrame {
 
     @UIEventHandler(UIEventType.LOGIN_ERROR)
     public void processLoginError(UIEvent uiEvent) {
-        WebOptionPane.showMessageDialog(contentPane, "登陆失败: " + uiEvent.getTarget(), "提示", WebOptionPane.INFORMATION_MESSAGE);
+        WebOptionPane.showMessageDialog(contentPane, "登陆失败：" + uiEvent.getTarget(), "提示", WebOptionPane.INFORMATION_MESSAGE);
     }
 
     @UIEventHandler(UIEventType.LOGIN_SUCCESS)

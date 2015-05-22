@@ -180,7 +180,7 @@ public class AddFriendFrame extends IMFrame {
 
                 BuddyNode buddyNode = (BuddyNode) userTree.getLastSelectedPathComponent();
                 if (buddyNode != null) {
-                    IMContext.getBean(FrameManager.class).showChooseCate();
+                    IMContext.getBean(FrameManager.class).showChooseCate(buddyNode.getBuddy().getId());
                 } else {
                     //提醒 未选择分组
                 }
@@ -217,7 +217,7 @@ public class AddFriendFrame extends IMFrame {
         return null;
     }
 
-    @UIEventHandler(UIEventType.QUERY_FRIEND_BY_NICK_H)
+    @UIEventHandler(UIEventType.QUERY_FRIEND_BY_NICK_CALLBACK)
     public void processGetFriendByNickList(UIEvent uiEvent) {
         List<IMBuddy> buddies = (List<IMBuddy>) uiEvent.getTarget();
 

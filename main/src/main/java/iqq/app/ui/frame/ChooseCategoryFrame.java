@@ -13,7 +13,14 @@ import com.alee.laf.rootpane.WebFrame;
 import com.alee.laf.scroll.WebScrollPane;
 import com.alee.laf.text.WebTextField;
 import com.alee.laf.tree.WebTree;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import iqq.api.bean.IMBuddy;
+import iqq.api.bean.IMCategory;
+import iqq.app.api.IMResponse;
+import iqq.app.core.context.IMContext;
+import iqq.app.core.module.LogicModule;
+import iqq.app.core.service.HttpService;
 import iqq.app.core.service.SkinService;
 import iqq.app.ui.IMContentPane;
 import iqq.app.ui.IMFrame;
@@ -21,11 +28,15 @@ import iqq.app.ui.component.TitleComponent;
 import iqq.app.ui.event.UIEvent;
 import iqq.app.ui.event.UIEventHandler;
 import iqq.app.ui.event.UIEventType;
+import iqq.app.ui.manager.FrameManager;
+import iqq.app.ui.renderer.CategoryComboxCellRenderer;
 import iqq.app.ui.renderer.RecentTreeCellRenderer;
 import iqq.app.ui.renderer.node.BuddyNode;
 import iqq.app.util.UIUtils;
+import iqq.app.util.gson.GsonUtils;
 
 import javax.imageio.ImageIO;
+import javax.sound.midi.Soundbank;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -37,19 +48,24 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by Tony on 5/18/15.
  */
-public class ChooseCateFrame extends IMFrame {
+public class ChooseCategoryFrame extends IMFrame {
     private IMContentPane contentPane = new IMContentPane();
     private WebPanel headerPanel = headerPanel();
     private WebPanel contentPanel = new WebPanel();
+    private String friendId=null;
+    private List<IMCategory> categories=new LinkedList<>();
 
-    public ChooseCateFrame() {
-        initUI();
-        initContent();
+    public ChooseCategoryFrame(String buddyId) {
+        friendId=buddyId;
+        String id=IMContext.getBean(LogicModule.class).getOwner().getId();
+        broadcastUIEvent(UIEventType.QUERY_CATEGORY_BY_USER_ID, id);
+
     }
 
     /**
@@ -99,6 +115,7 @@ public class ChooseCateFrame extends IMFrame {
         return headerPanel;
     }
     private WebPanel chooseCatePanel() {
+
         WebPanel chooseCatePanel = new WebPanel();
 
 
@@ -111,8 +128,11 @@ public class ChooseCateFrame extends IMFrame {
         label.setPreferredSize(60, 32);
 
         WebComboBox comboBox=new WebComboBox();
-        comboBox.addItem("我的好友");
-        comboBox.addItem("黑名单");
+        comboBox.setRenderer(new CategoryComboxCellRenderer());
+        for(IMCategory category:categories){
+            comboBox.addItem(category);
+        }
+
         comboBox.setPreferredSize(100,32);
 
         confirmBtn.setPreferredSize(60, 30);
@@ -133,6 +153,11 @@ public class ChooseCateFrame extends IMFrame {
         });
         return chooseCatePanel;
     }
-
+    @UIEventHandler(UIEventType.QUERY_CATEGORY_BY_USER_ID_CALLBACK)
+    public void processQueryCategoryByUserId(UIEvent uiEvent) {
+        categories =(List<IMCategory>)uiEvent.getTarget();
+        initUI();
+        initContent();
+    }
 
 }

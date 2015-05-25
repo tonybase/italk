@@ -1,5 +1,6 @@
 package iqq.app.ui.manager;
 
+import com.alee.laf.optionpane.WebOptionPane;
 import com.alee.utils.SystemUtils;
 import iqq.api.bean.IMEntity;
 import iqq.app.core.service.EventService;
@@ -24,6 +25,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Project  : iqq-projects
@@ -43,8 +45,8 @@ public class MainManager {
     private Image flashImage;    //当前闪动的头像
     private Image defaultImage;    //默认头像
     private Image blankImage;    //空白的头像
-    private IMEntity flashOwner;    //当前闪烁的用户
-    private Deque<IMEntity> flashQueue;    //带闪烁的对象列表
+    private FlashEvent flashOwner;    //当前闪烁的用户
+    private Deque<FlashEvent> flashQueue;    //带闪烁的对象列表
 
     @Resource
     private ChatManager chatManager;
@@ -74,10 +76,10 @@ public class MainManager {
             flashQueue.remove(event.getTarget());
         }
         if (flashOwner != null && flashOwner != event.getTarget()) {
-            flashQueue.addFirst(flashOwner);
+            flashQueue.addFirst(new FlashEvent((IMEntity) event.getTarget(), event.getDataExt()));
         }
-        flashOwner = (IMEntity) event.getTarget();
-        flashImage = getTrayFace(flashOwner);
+        flashOwner = new FlashEvent((IMEntity) event.getTarget(), event.getDataExt());
+        flashImage = getTrayFace(flashOwner.getEntity());
         flashTimer.run();
     }
 
@@ -92,7 +94,7 @@ public class MainManager {
             flashQueue.remove(flashOwner);
         } else {
             flashOwner = flashQueue.poll();
-            flashImage = getTrayFace(flashOwner);
+            flashImage = getTrayFace(flashOwner.getEntity());
             flashTimer.run();
         }
     }
@@ -158,9 +160,19 @@ public class MainManager {
                         logger.debug("MouseEvent " + e.getButton() + " " + e.getClickCount());
                         //弹出左键菜单
                         if (e.getButton() == MouseEvent.BUTTON1) {
+                            if (flashOwner.hasData("action") && flashOwner.getData("action").equals("BUDDY_REQUEST")) {
+                                String message = "是否添加 " + flashOwner.getEntity().getNick() + " 为好友？";
+                                int isOk = WebOptionPane.showConfirmDialog(null, message, "提示", WebOptionPane.YES_NO_OPTION);
+                                if (isOk == WebOptionPane.YES_OPTION) {
+                                    eventService.broadcast(new UIEvent(UIEventType.ADD_FRIEND_REQUEST, flashOwner.getEntity(), flashOwner.data));
+                                } else {
+                                    eventService.broadcast(new UIEvent(UIEventType.REFUSE_FRIEND_REQUEST, flashOwner.getEntity(), flashOwner.data));
+                                }
+                                return;
+                            }
                             // 存在未读消息，点击显示
                             if (flashOwner != null) {
-                                chatManager.addChat(flashOwner);
+                                chatManager.addChat(flashOwner.getEntity());
                             } else {
                                 show();
                             }
@@ -194,6 +206,36 @@ public class MainManager {
                 Image curImg = icon.getImage();
                 icon.setImage(curImg == flashImage ? blankImage : flashImage);
             }
+        }
+    }
+
+    public class FlashEvent {
+        private IMEntity entity;
+        private Map<String, Object> data;
+
+        public FlashEvent(IMEntity entity, Map<String, Object> data) {
+            this.entity = entity;
+            this.data = data;
+        }
+
+        public IMEntity getEntity() {
+            return entity;
+        }
+
+        public void setEntity(IMEntity entity) {
+            this.entity = entity;
+        }
+
+        public void putData(String key, Object value) {
+            this.data.put(key, value);
+        }
+
+        public boolean hasData(String key) {
+            return this.data.containsKey(key);
+        }
+
+        public <T> T getData(String key) {
+            return (T) this.data.get(key);
         }
     }
 }

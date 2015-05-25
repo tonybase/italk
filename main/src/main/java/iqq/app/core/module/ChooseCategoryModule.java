@@ -101,20 +101,5 @@ public class ChooseCategoryModule {
             }
         });
     }
-    @UIEventHandler(UIEventType.PUSH_FRIEND_REQUEST)
-    private void pushFriendRequest(UIEvent uiEvent) {
-        Map<String, String> map= (Map) uiEvent.getTarget();
-        httpService.doPost("http://127.0.0.1:8080/users/relation/push", map, new HttpService.StringCallback() {
-            @Override
-            public void onSuccess(String content) {
-                System.out.println(content);
-                eventService.broadcast(new UIEvent(UIEventType.PUSH_FRIEND_REQUEST_RETURN, ""));
-            }
 
-            @Override
-            public void onFailure(int statusCode, String content) {
-                logger.error("statusCode=" + statusCode + " " + content);
-            }
-        });
-    }
 }

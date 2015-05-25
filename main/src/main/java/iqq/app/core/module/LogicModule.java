@@ -18,7 +18,6 @@ package iqq.app.core.module;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import iqq.api.bean.*;
 import iqq.api.bean.content.IMTextItem;
 import iqq.app.api.IMRequest;
@@ -44,7 +43,6 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
-import java.util.List;
 
 //import iqq.im.QQException;
 
@@ -249,6 +247,18 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
             JsonObject jsonObject = response.getData().get("user").getAsJsonObject();
             System.out.println("=======进来了======");
             System.out.println(GsonUtils.toJson(jsonObject));
+
+            IMUser user = new IMUser();
+            user.setId(jsonObject.get("sender").getAsString());
+            user.setAvatarBuffered(UIUtils.getDefaultAvatarBuffer());
+
+            String senderCateId = jsonObject.get("senderCateId").getAsString();
+
+            // 通知提示好友请求
+            UIEvent event = new UIEvent(UIEventType.FLASH_USER_START, user);
+            event.putData("action", "BUDDY_REQUEST");
+            event.putData("category_id", senderCateId);
+            eventService.broadcast(event);
 
         }
     }

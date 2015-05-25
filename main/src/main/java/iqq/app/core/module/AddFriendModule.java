@@ -127,4 +127,64 @@ public class AddFriendModule {
         });
     }
 
+    @UIEventHandler(UIEventType.PUSH_FRIEND_REQUEST)
+    private void pushFriendRequest(UIEvent uiEvent) {
+        Map<String, String> map = (Map) uiEvent.getTarget();
+        httpService.doPost("http://127.0.0.1:8080/users/relation/push", map, new HttpService.StringCallback() {
+            @Override
+            public void onSuccess(String content) {
+                System.out.println(content);
+                eventService.broadcast(new UIEvent(UIEventType.PUSH_FRIEND_REQUEST_RETURN, ""));
+            }
+
+            @Override
+            public void onFailure(int statusCode, String content) {
+                logger.error("statusCode=" + statusCode + " " + content);
+            }
+        });
+    }
+
+    @UIEventHandler(UIEventType.ADD_FRIEND_REQUEST)
+    private void pushFriendRequestAdd(UIEvent uiEvent) {
+        IMUser user = (IMUser) uiEvent.getTarget();
+        String cateId = uiEvent.getData("category_id");
+
+        Map<String, String> map = new HashMap<>();
+        map.put("user_id", user.getId());
+        map.put("category_id", cateId);
+        httpService.doPost("http://127.0.0.1:8080/users/relation/add", map, new HttpService.StringCallback() {
+            @Override
+            public void onSuccess(String content) {
+                System.out.println(content);
+                eventService.broadcast(new UIEvent(UIEventType.ADD_FRIEND_SUCCESS, ""));
+            }
+
+            @Override
+            public void onFailure(int statusCode, String content) {
+                logger.error("statusCode=" + statusCode + " " + content);
+            }
+        });
+    }
+
+    @UIEventHandler(UIEventType.REFUSE_FRIEND_REQUEST)
+    private void pushFriendRequestRefuse(UIEvent uiEvent) {
+        IMUser user = (IMUser) uiEvent.getTarget();
+        String cateId = uiEvent.getData("category_id");
+
+        Map<String, String> map = new HashMap<>();
+        map.put("user_id", user.getId());
+        map.put("category_id", cateId);
+        httpService.doPost("http://127.0.0.1:8080/users/relation/del", map, new HttpService.StringCallback() {
+            @Override
+            public void onSuccess(String content) {
+                System.out.println(content);
+                eventService.broadcast(new UIEvent(UIEventType.DELETE_FRIEND_SUCCESS, ""));
+            }
+
+            @Override
+            public void onFailure(int statusCode, String content) {
+                logger.error("statusCode=" + statusCode + " " + content);
+            }
+        });
+    }
 }

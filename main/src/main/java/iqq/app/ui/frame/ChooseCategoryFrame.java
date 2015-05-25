@@ -13,6 +13,7 @@ import com.alee.laf.rootpane.WebFrame;
 import com.alee.laf.scroll.WebScrollPane;
 import com.alee.laf.text.WebTextField;
 import com.alee.laf.tree.WebTree;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import iqq.api.bean.IMBuddy;
@@ -47,8 +48,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -58,6 +58,7 @@ public class ChooseCategoryFrame extends IMFrame {
     private IMContentPane contentPane = new IMContentPane();
     private WebPanel headerPanel = headerPanel();
     private WebPanel contentPanel = new WebPanel();
+    private WebComboBox comboBox=new WebComboBox();
     private String friendId=null;
     private List<IMCategory> categories=new LinkedList<>();
 
@@ -127,7 +128,7 @@ public class ChooseCategoryFrame extends IMFrame {
         WebLabel label=new WebLabel("好友分组:");
         label.setPreferredSize(60, 32);
 
-        WebComboBox comboBox=new WebComboBox();
+
         comboBox.setRenderer(new CategoryComboxCellRenderer());
         for(IMCategory category:categories){
             comboBox.addItem(category);
@@ -149,6 +150,19 @@ public class ChooseCategoryFrame extends IMFrame {
 
             }
         });
+        confirmBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Object obj = comboBox.getSelectedItem();//返回当前所选的项。
+                IMCategory category = (IMCategory )obj;
+                Map map =new HashMap();
+                map.put("sender_category_id",category.getId());
+                map.put("sender",IMContext.getBean(LogicModule.class).getOwner().getId());
+                map.put("receiver",friendId);
+                broadcastUIEvent(UIEventType.PUSH_FRIEND_REQUEST, map);
+
+            }
+        });
         return chooseCatePanel;
     }
     @UIEventHandler(UIEventType.QUERY_CATEGORY_BY_USER_ID_CALLBACK)
@@ -156,6 +170,11 @@ public class ChooseCategoryFrame extends IMFrame {
         categories =(List<IMCategory>)uiEvent.getTarget();
         initUI();
         initContent();
+    }
+    @UIEventHandler(UIEventType.PUSH_FRIEND_REQUEST_RETURN)
+    public void processPushFriendRequest(UIEvent uiEvent) {
+       dispose();
+        contentPane.getParent();
     }
 
 }

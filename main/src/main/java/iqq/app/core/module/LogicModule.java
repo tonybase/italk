@@ -245,6 +245,11 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
             IMBuddy buddy = findById(jsonObject.get("id").getAsString());
             buddy.setStatus(IMStatus.valueOfRaw(jsonObject.get("state").getAsInt()));
             eventService.broadcast(new UIEvent(UIEventType.USER_STATUS_UPDATE, buddy));
+        } else if (response.getRefer().equals("PUSH_BUDDY_REQUEST")) {
+            JsonObject jsonObject = response.getData().get("user").getAsJsonObject();
+            System.out.println("=======进来了======");
+            System.out.println(GsonUtils.toJson(jsonObject));
+
         }
     }
 

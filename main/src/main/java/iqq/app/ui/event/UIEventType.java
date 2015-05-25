@@ -208,6 +208,8 @@ public enum UIEventType {
     QUERY_FRIEND_BY_NICK_CALLBACK,
     QUERY_CATEGORY_BY_USER_ID,
     QUERY_CATEGORY_BY_USER_ID_CALLBACK,
+    PUSH_FRIEND_REQUEST,
+    PUSH_FRIEND_REQUEST_RETURN,
     /**
      * *****窗口显示******
      */

@@ -248,16 +248,16 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
             System.out.println("=======进来了======");
             System.out.println(GsonUtils.toJson(jsonObject));
 
-            IMUser user = new IMUser();
-            user.setId(jsonObject.get("sender").getAsString());
+            IMUser user = GsonUtils.fromJson(jsonObject.toString(),IMUser.class);
+
             user.setAvatarBuffered(UIUtils.getDefaultAvatarBuffer());
 
-            String senderCateId = jsonObject.get("senderCateId").getAsString();
+           // String senderCateId = jsonObject.get("senderCateId").getAsString();
 
             // 通知提示好友请求
             UIEvent event = new UIEvent(UIEventType.FLASH_USER_START, user);
-            event.putData("action", "BUDDY_REQUEST");
-            event.putData("category_id", senderCateId);
+           event.putData("action", "BUDDY_REQUEST");
+          //  event.putData("category_id", senderCateId);
             eventService.broadcast(event);
 
         }

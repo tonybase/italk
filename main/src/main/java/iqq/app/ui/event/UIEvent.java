@@ -19,6 +19,7 @@ package iqq.app.ui.event;
 import iqq.api.common.EventBase;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -35,7 +36,7 @@ public class UIEvent extends EventBase implements Serializable {
     /**
      * 事件数据MAP，也可以直接把事件数据以KEY的形式放入MAP中，处理事件时按KEY读取出来，编程时要确保KEY一致
      */
-    private Map<String, Object> data;
+    private Map<String, Object> data=new HashMap<String, Object>();
 
     public UIEvent(UIEventType type) {
         this.type = type;

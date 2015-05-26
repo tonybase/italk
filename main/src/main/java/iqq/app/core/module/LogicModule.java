@@ -18,6 +18,7 @@ package iqq.app.core.module;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import iqq.api.bean.*;
 import iqq.api.bean.content.IMTextItem;
 import iqq.app.api.IMRequest;
@@ -41,6 +42,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.*;
+import java.lang.reflect.Type;
 import java.net.Socket;
 import java.util.*;
 
@@ -245,19 +247,22 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
             eventService.broadcast(new UIEvent(UIEventType.USER_STATUS_UPDATE, buddy));
         } else if (response.getRefer().equals("PUSH_BUDDY_REQUEST")) {
             JsonObject jsonObject = response.getData().get("user").getAsJsonObject();
-            System.out.println("=======进来了======");
-            System.out.println(GsonUtils.toJson(jsonObject));
-
-            IMUser user = GsonUtils.fromJson(jsonObject.toString(),IMUser.class);
-
+            IMUser user = new IMUser();
+            user.setId(jsonObject.get("id").getAsString());
+            user.setNick(jsonObject.get("nick").getAsString());
+            user.setSign(jsonObject.get("sign").getAsString());
+            user.setStatus((IMStatus.valueOfRaw(jsonObject.get("status").getAsInt())));
+            user.setAvatar(jsonObject.get("avatar").getAsString());
             user.setAvatarBuffered(UIUtils.getDefaultAvatarBuffer());
-
-           // String senderCateId = jsonObject.get("senderCateId").getAsString();
-
+            System.out.println("=====");
+            System.out.println(jsonObject.toString());
+            //闪烁通知
+            String friendRequestId = jsonObject.get("buddyRequestId").getAsString();
             // 通知提示好友请求
             UIEvent event = new UIEvent(UIEventType.FLASH_USER_START, user);
-           event.putData("action", "BUDDY_REQUEST");
-          //  event.putData("category_id", senderCateId);
+            event.putData("action", "BUDDY_REQUEST");
+            Map<String,String> map =GsonUtils.fromJson(jsonObject.toString(), new TypeToken<Map<String, String>>(){}.getType());
+            event.putData("data", map);
             eventService.broadcast(event);
 
         }

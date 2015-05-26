@@ -216,6 +216,7 @@ public enum UIEventType {
     REFUSE_FRIEND_SUCCESS,
     PUSH_FRIEND_REQUEST,
     PUSH_FRIEND_REQUEST_RETURN,
+    GET_FRIEND_REQUEST,
     /**
      * *****窗口显示******
      */

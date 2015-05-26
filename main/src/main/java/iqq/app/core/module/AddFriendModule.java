@@ -133,7 +133,6 @@ public class AddFriendModule {
         httpService.doPost("http://127.0.0.1:8080/users/relation/push", map, new HttpService.StringCallback() {
             @Override
             public void onSuccess(String content) {
-                System.out.println(content);
                 eventService.broadcast(new UIEvent(UIEventType.PUSH_FRIEND_REQUEST_RETURN, ""));
             }
 
@@ -177,7 +176,6 @@ public class AddFriendModule {
         httpService.doPost("http://127.0.0.1:8080/users/relation/del", map, new HttpService.StringCallback() {
             @Override
             public void onSuccess(String content) {
-                System.out.println(content);
                 eventService.broadcast(new UIEvent(UIEventType.DELETE_FRIEND_SUCCESS, ""));
             }
 

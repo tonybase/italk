@@ -3,6 +3,9 @@ package iqq.app.ui.manager;
 import iqq.app.ui.frame.*;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+import java.util.Objects;
+
 /**
  * Created by Tony on 4/6/15.
  */
@@ -13,6 +16,7 @@ public class FrameManager {
     private VerifyFrame verifyFrame = null;
     private AddFriendFrame addFriendFrame = null;
     private ChooseCategoryFrame chooseCateFrame =null;
+    private GetFriendRequestFrame getFriendRequestFrame=null;
 
     public void showLogin() {
         if (loginFrame == null) {
@@ -77,6 +81,20 @@ public class FrameManager {
     public void hideChooseCate() {
         if (chooseCateFrame != null) {
             chooseCateFrame.setVisible(false);
+        }
+    }
+    public void showGetFriendRequest(Map<String,Object> data) {
+        if (getFriendRequestFrame == null) {
+            getFriendRequestFrame = new GetFriendRequestFrame(data);
+            getFriendRequestFrame.setVisible(true);
+        } else if (!getFriendRequestFrame.isVisible()) {
+            getFriendRequestFrame.setVisible(true);
+        }
+    }
+
+    public void hideGetFriendRequest() {
+        if (getFriendRequestFrame != null) {
+            getFriendRequestFrame.setVisible(false);
         }
     }
 }

@@ -3,6 +3,7 @@ package iqq.app.ui.manager;
 import com.alee.laf.optionpane.WebOptionPane;
 import com.alee.utils.SystemUtils;
 import iqq.api.bean.IMEntity;
+import iqq.app.core.context.IMContext;
 import iqq.app.core.service.EventService;
 import iqq.app.core.service.ResourceService;
 import iqq.app.core.service.SkinService;
@@ -13,6 +14,7 @@ import iqq.app.ui.event.UIEventHandler;
 import iqq.app.ui.event.UIEventType;
 import iqq.app.ui.frame.MainFrame;
 import iqq.app.util.UIUtils;
+import iqq.app.util.gson.GsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -160,18 +162,14 @@ public class MainManager {
                         logger.debug("MouseEvent " + e.getButton() + " " + e.getClickCount());
                         //弹出左键菜单
                         if (e.getButton() == MouseEvent.BUTTON1) {
+
                             if (flashOwner.hasData("action") && flashOwner.getData("action").equals("BUDDY_REQUEST")) {
-                                String message = "是否添加 " + flashOwner.getEntity().getNick() + " 为好友？";
-                                int isOk = WebOptionPane.showConfirmDialog(null, message, "提示", WebOptionPane.YES_NO_OPTION);
-                                if (isOk == WebOptionPane.YES_OPTION) {
-                                    eventService.broadcast(new UIEvent(UIEventType.ADD_FRIEND_REQUEST, flashOwner.getEntity(), flashOwner.data));
-                                } else {
-                                    eventService.broadcast(new UIEvent(UIEventType.REFUSE_FRIEND_REQUEST, flashOwner.getEntity(), flashOwner.data));
-                                }
-                                return;
+                                eventService.broadcast(new UIEvent(UIEventType.GET_FRIEND_REQUEST, flashOwner.getData("data")));
+                                //IMContext.getBean(FrameManager.class).showGetFriendRequest();
+
                             }
                             // 存在未读消息，点击显示
-                            if (flashOwner != null) {
+                            if (!flashOwner.hasData("action")) {
                                 chatManager.addChat(flashOwner.getEntity());
                             } else {
                                 show();

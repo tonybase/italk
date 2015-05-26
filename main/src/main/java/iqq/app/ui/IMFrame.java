@@ -4,10 +4,7 @@ import com.alee.laf.rootpane.WebFrame;
 import com.alee.utils.SystemUtils;
 import com.sun.awt.AWTUtilities;
 import iqq.app.core.context.IMContext;
-import iqq.app.core.service.EventService;
-import iqq.app.core.service.I18nService;
-import iqq.app.core.service.ResourceService;
-import iqq.app.core.service.SkinService;
+import iqq.app.core.service.*;
 import iqq.app.ui.event.UIEvent;
 import iqq.app.ui.event.UIEventDispatcher;
 import iqq.app.ui.event.UIEventType;
@@ -32,6 +29,7 @@ public abstract class IMFrame extends WebFrame implements Skin {
     protected SkinService skinService;
     protected ResourceService resourceService;
     protected EventService eventService;
+    protected HttpService httpService;
 
     public IMFrame() {
 
@@ -39,6 +37,7 @@ public abstract class IMFrame extends WebFrame implements Skin {
         skinService = IMContext.getBean(SkinService.class);
         resourceService = IMContext.getBean(ResourceService.class);
         eventService = IMContext.getBean(EventService.class);
+        httpService = IMContext.getBean(HttpService.class);
 
         setDefaultCloseOperation(WebFrame.DISPOSE_ON_CLOSE);
         getRootPane().setDoubleBuffered(true);
@@ -153,5 +152,14 @@ public abstract class IMFrame extends WebFrame implements Skin {
      */
     public I18nService getI18nService() {
         return i18nService;
+    }
+
+    /**
+     * 网络请求
+     *
+     * @return
+     */
+    public HttpService getHttpService() {
+        return httpService;
     }
 }

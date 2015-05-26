@@ -1,5 +1,8 @@
 package iqq.app.ui.manager;
 
+import iqq.api.bean.IMBuddy;
+import iqq.api.bean.IMEntity;
+import iqq.api.bean.IMUser;
 import iqq.app.ui.frame.*;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +18,8 @@ public class FrameManager {
     private LoginFrame loginFrame = null;
     private VerifyFrame verifyFrame = null;
     private AddFriendFrame addFriendFrame = null;
-    private ChooseCategoryFrame chooseCateFrame =null;
-    private GetFriendRequestFrame getFriendRequestFrame=null;
+    private ChooseCategoryFrame chooseCateFrame = null;
+    private GetFriendRequestFrame getFriendRequestFrame = null;
 
     public void showLogin() {
         if (loginFrame == null) {
@@ -69,6 +72,7 @@ public class FrameManager {
             addFriendFrame.setVisible(false);
         }
     }
+
     public void showChooseCate(String id) {
         if (chooseCateFrame == null) {
             chooseCateFrame = new ChooseCategoryFrame(id);
@@ -83,9 +87,10 @@ public class FrameManager {
             chooseCateFrame.setVisible(false);
         }
     }
-    public void showGetFriendRequest(Map<String,Object> data) {
+
+    public void showGetFriendRequest(IMBuddy buddy, String buddyRequestId) {
         if (getFriendRequestFrame == null) {
-            getFriendRequestFrame = new GetFriendRequestFrame(data);
+            getFriendRequestFrame = new GetFriendRequestFrame(buddy, buddyRequestId);
             getFriendRequestFrame.setVisible(true);
         } else if (!getFriendRequestFrame.isVisible()) {
             getFriendRequestFrame.setVisible(true);
@@ -97,4 +102,5 @@ public class FrameManager {
             getFriendRequestFrame.setVisible(false);
         }
     }
+
 }

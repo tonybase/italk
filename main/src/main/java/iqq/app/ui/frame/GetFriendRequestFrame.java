@@ -10,11 +10,16 @@ import com.alee.laf.panel.WebPanel;
 import com.alee.laf.rootpane.WebFrame;
 import com.alee.laf.scroll.WebScrollPane;
 import com.alee.laf.tree.WebTree;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import iqq.api.bean.IMAccount;
 import iqq.api.bean.IMBuddy;
 import iqq.api.bean.IMCategory;
 import iqq.api.bean.IMStatus;
+import iqq.app.api.IMResponse;
 import iqq.app.core.context.IMContext;
 import iqq.app.core.module.LogicModule;
+import iqq.app.core.service.HttpService;
 import iqq.app.core.service.SkinService;
 import iqq.app.ui.IMContentPane;
 import iqq.app.ui.IMFrame;
@@ -27,6 +32,8 @@ import iqq.app.ui.renderer.RecentTreeCellRenderer;
 import iqq.app.ui.renderer.node.BuddyNode;
 import iqq.app.util.UIUtils;
 import iqq.app.util.gson.GsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -34,8 +41,6 @@ import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +49,8 @@ import java.util.Map;
  * Created by Tony on 5/18/15.
  */
 public class GetFriendRequestFrame extends IMFrame {
+    private Logger logger = LoggerFactory.getLogger(GetFriendRequestFrame.class);
+
     private IMContentPane contentPane = new IMContentPane();
     private WebPanel headerPanel = headerPanel();
     private WebPanel contentPanel = new WebPanel();
@@ -51,39 +58,55 @@ public class GetFriendRequestFrame extends IMFrame {
     private List<IMCategory> categories = new LinkedList<>();
     private WebTree userTree;
     private DefaultTreeModel userModel;
-    private IMBuddy buddy = new IMBuddy();
+    private IMBuddy buddy;
     private String friendRequestId;
 
-    public GetFriendRequestFrame(Map<String, Object> data) {
-        System.out.println("数据跟踪");
-        System.out.println(GsonUtils.toJson(data));
-        buddy.setId(data.get("id").toString());
-        buddy.setNick(data.get("nick").toString());
-        buddy.setSign(data.get("sign").toString());
-        buddy.setStatus((IMStatus.valueOfRaw(Integer.valueOf(data.get("status").toString()))));
-        buddy.setAvatar(data.get("avatar").toString());
-        buddy.setAvatarBuffered(UIUtils.getDefaultAvatarBuffer());
-        friendRequestId = data.get("buddyRequestId").toString();
-        String id = IMContext.getBean(LogicModule.class).getOwner().getId();
-        broadcastUIEvent(UIEventType.QUERY_CATEGORY_BY_USER_ID, id);
+    public GetFriendRequestFrame(IMBuddy buddy, String buddyRequestId) {
+        this.buddy = buddy;
+        this.friendRequestId = buddyRequestId;
 
+        logger.info("friendRequestId=" + friendRequestId);
+        logger.info(buddy.toString());
+
+        initUI();
+        initContent();
+
+        loadData();
+        loadData();
     }
 
-    /**
-     * 广播 UIEvent
-     *
-     * @param type
-     * @param target
-     */
-    protected void broadcastUIEvent(UIEventType type, Object target) {
-        eventService.broadcast(new UIEvent(type, target));
+    private void loadData() {
+        IMAccount account = IMContext.getBean(LogicModule.class).getOwner();
+        getHttpService().doGet("http://127.0.0.1:8080/users/category/query?id=" + account.getId(), new HttpService.StringCallback() {
+            @Override
+            public void onSuccess(String content) {
+                logger.info(content);
+                IMResponse response = GsonUtils.fromJson(content, IMResponse.class);
+                JsonArray jsonArray = response.getData().get("categories").getAsJsonArray();
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
+                    IMCategory category = new IMCategory();
+                    category.setId(jsonObject.get("id").getAsString());
+                    category.setName(jsonObject.get("name").getAsString());
+                    categories.add(category);
+                }
+
+                contentPanel.add(chooseCatePanel());
+                contentPanel.revalidate();
+            }
+
+            @Override
+            public void onFailure(int statusCode, String content) {
+                logger.error("statusCode=" + statusCode + " " + content);
+            }
+        });
     }
 
     private void initUI() {
         setTitle("好友请求");
         setDefaultCloseOperation(WebFrame.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
-        setPreferredSize(new Dimension(320, 200));        // 首选大小
+        setPreferredSize(new Dimension(320, 230));        // 首选大小
         setLocation(UIUtils.getLocationForCenter(this));
         pack();
     }
@@ -96,18 +119,10 @@ public class GetFriendRequestFrame extends IMFrame {
         setIconImage(getSkinService().getIconByKey("skin/skinIcon").getImage());
     }
 
-    public void setUser(IMBuddy buddy) {
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-        root.add(new BuddyNode(buddy));
-        userModel = new DefaultTreeModel(root);
-        userTree.setModel(userModel);
-    }
-
     private void initContent() {
         contentPane.add(headerPanel, BorderLayout.NORTH);
         contentPane.add(contentPanel, BorderLayout.CENTER);
         setIMContentPane(contentPane);
-        contentPanel.add(chooseCatePanel());
     }
 
     private WebPanel headerPanel() {
@@ -125,6 +140,10 @@ public class GetFriendRequestFrame extends IMFrame {
     private WebPanel chooseCatePanel() {
         userTree = new WebTree();
         userTree.setCellRenderer(new RecentTreeCellRenderer());
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode();
+        root.add(new BuddyNode(buddy));
+        userModel = new DefaultTreeModel(root);
+        userTree.setModel(userModel);
         WebScrollPane treeScroll = new WebScrollPane(userTree, false, false);
         // 背景色
         treeScroll.getViewport().setBackground(new Color(250, 250, 250));
@@ -167,19 +186,10 @@ public class GetFriendRequestFrame extends IMFrame {
         confirmBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                //broadcastUIEvent(UIEventType.PUSH_FRIEND_REQUEST, map);
-
+//                broadcastUIEvent(UIEventType.PUSH_FRIEND_REQUEST, map);
             }
         });
         return chooseCatePanel;
-    }
-
-    @UIEventHandler(UIEventType.QUERY_CATEGORY_BY_USER_ID_CALLBACK)
-    public void processQueryCategoryByUserId(UIEvent uiEvent) {
-        categories = (List<IMCategory>) uiEvent.getTarget();
-        initUI();
-        initContent();
     }
 
     @UIEventHandler(UIEventType.PUSH_FRIEND_REQUEST_RETURN)

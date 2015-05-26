@@ -12,6 +12,8 @@ import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -25,6 +27,8 @@ import java.util.Map;
  */
 @Service
 public class HttpServiceImpl implements HttpService {
+    private Logger logger = LoggerFactory.getLogger(HttpServiceImpl.class);
+
     private CloseableHttpAsyncClient httpclient = HttpAsyncClients.createDefault();
 
     public HttpServiceImpl() {
@@ -33,6 +37,7 @@ public class HttpServiceImpl implements HttpService {
 
     @Override
     public void doGet(String url, StringCallback callback) {
+        logger.debug("doGet " + url);
         HttpGet request = new HttpGet(url);
         httpclient.execute(request, new FutureCallback<HttpResponse>() {
 
@@ -60,10 +65,13 @@ public class HttpServiceImpl implements HttpService {
 
             }
         });
+        httpclient.start();
     }
 
     @Override
     public void doPost(String url, Map<String, String> params, StringCallback callback) {
+        logger.debug("doPost " + url + " " + params);
+
         HttpPost request = new HttpPost(url);
         List<NameValuePair> formparams = new ArrayList<>();
         for (String key : params.keySet()) {
@@ -100,5 +108,6 @@ public class HttpServiceImpl implements HttpService {
 
             }
         });
+        httpclient.start();
     }
 }

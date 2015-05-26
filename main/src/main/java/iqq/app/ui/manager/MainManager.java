@@ -2,6 +2,7 @@ package iqq.app.ui.manager;
 
 import com.alee.laf.optionpane.WebOptionPane;
 import com.alee.utils.SystemUtils;
+import iqq.api.bean.IMBuddy;
 import iqq.api.bean.IMEntity;
 import iqq.app.core.context.IMContext;
 import iqq.app.core.service.EventService;
@@ -163,10 +164,9 @@ public class MainManager {
                         //弹出左键菜单
                         if (e.getButton() == MouseEvent.BUTTON1) {
 
-                            if (flashOwner.hasData("action") && flashOwner.getData("action").equals("BUDDY_REQUEST")) {
-                                eventService.broadcast(new UIEvent(UIEventType.GET_FRIEND_REQUEST, flashOwner.getData("data")));
-                                //IMContext.getBean(FrameManager.class).showGetFriendRequest();
-
+                            if (flashOwner.hasData("action") && flashOwner.getData("action").equals("ADD_BUDDY_REQUEST")) {
+                                IMContext.getBean(FrameManager.class).showGetFriendRequest((IMBuddy) flashOwner.getEntity(), flashOwner.getData("buddy_request_id"));
+                                return;
                             }
                             // 存在未读消息，点击显示
                             if (!flashOwner.hasData("action")) {

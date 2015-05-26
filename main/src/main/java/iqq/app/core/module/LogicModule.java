@@ -247,22 +247,19 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
             eventService.broadcast(new UIEvent(UIEventType.USER_STATUS_UPDATE, buddy));
         } else if (response.getRefer().equals("PUSH_BUDDY_REQUEST")) {
             JsonObject jsonObject = response.getData().get("user").getAsJsonObject();
-            IMUser user = new IMUser();
+            IMBuddy user = new IMBuddy();
             user.setId(jsonObject.get("id").getAsString());
             user.setNick(jsonObject.get("nick").getAsString());
             user.setSign(jsonObject.get("sign").getAsString());
             user.setStatus((IMStatus.valueOfRaw(jsonObject.get("status").getAsInt())));
             user.setAvatar(jsonObject.get("avatar").getAsString());
             user.setAvatarBuffered(UIUtils.getDefaultAvatarBuffer());
-            System.out.println("=====");
-            System.out.println(jsonObject.toString());
             //闪烁通知
             String friendRequestId = jsonObject.get("buddyRequestId").getAsString();
             // 通知提示好友请求
             UIEvent event = new UIEvent(UIEventType.FLASH_USER_START, user);
-            event.putData("action", "BUDDY_REQUEST");
-            Map<String,String> map =GsonUtils.fromJson(jsonObject.toString(), new TypeToken<Map<String, String>>(){}.getType());
-            event.putData("data", map);
+            event.putData("action", "ADD_BUDDY_REQUEST");
+            event.putData("buddy_request_id", friendRequestId);
             eventService.broadcast(event);
 
         }
@@ -318,6 +315,9 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
             JsonObject cate = categories.get(i).getAsJsonObject();
             IMBuddyCategory buddyCategory = new IMBuddyCategory();
             buddyCategory.setName(cate.get("name").getAsString());
+            if (cate.get("buddies").isJsonNull()) {
+                continue;
+            }
             JsonArray buddiesJson = cate.get("buddies").getAsJsonArray();
             for (int j = 0; j < buddiesJson.size(); j++) {
                 JsonObject buddyJson = buddiesJson.get(j).getAsJsonObject();

@@ -24,6 +24,7 @@ import iqq.api.bean.*;
 import iqq.api.bean.content.IMTextItem;
 import iqq.app.api.IMRequest;
 import iqq.app.api.IMResponse;
+import iqq.app.core.context.IMContext;
 import iqq.app.core.query.AccountQuery;
 import iqq.app.core.query.BuddyQuery;
 import iqq.app.core.query.GroupQuery;
@@ -34,6 +35,7 @@ import iqq.app.ui.event.UIEvent;
 import iqq.app.ui.event.UIEventDispatcher;
 import iqq.app.ui.event.UIEventHandler;
 import iqq.app.ui.event.UIEventType;
+import iqq.app.ui.manager.FrameManager;
 import iqq.app.util.UIUtils;
 import iqq.app.util.gson.GsonUtils;
 import org.apache.commons.io.IOUtils;
@@ -130,9 +132,11 @@ public class AddFriendModule {
     @UIEventHandler(UIEventType.PUSH_FRIEND_REQUEST)
     private void pushFriendRequest(UIEvent uiEvent) {
         Map<String, String> map = (Map) uiEvent.getTarget();
+        logger.debug(map + "");
         httpService.doPost("http://127.0.0.1:8080/users/relation/push", map, new HttpService.StringCallback() {
             @Override
             public void onSuccess(String content) {
+                logger.debug(content);
                 eventService.broadcast(new UIEvent(UIEventType.PUSH_FRIEND_REQUEST_RETURN, ""));
             }
 
@@ -185,4 +189,5 @@ public class AddFriendModule {
             }
         });
     }
+
 }

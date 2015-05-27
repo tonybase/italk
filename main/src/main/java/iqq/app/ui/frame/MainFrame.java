@@ -103,4 +103,11 @@ public class MainFrame extends IMFrame {
         IMBuddy buddy = (IMBuddy) uiEvent.getTarget();
         contentPane.getMiddlePanel().updateUserStatus(buddy);
     }
+
+    @UIEventHandler(UIEventType.ACCEPT_FRIEND_SUCCESS)
+    public void processNewBuddy(UIEvent uiEvent) {
+        IMBuddy buddy = (IMBuddy) uiEvent.getTarget();
+        String category_id = uiEvent.getData("category_id");
+        contentPane.getMiddlePanel().addNewBuddy(category_id, buddy);
+    }
 }

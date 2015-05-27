@@ -63,4 +63,8 @@ public class Intent implements Serializable {
         }
         return null;
     }
+
+    public Map<String, Object> getDataEx() {
+        return dataMap;
+    }
 }

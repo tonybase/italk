@@ -33,10 +33,6 @@ public class UIEvent extends EventBase implements Serializable {
      * 事件ID，定义在IMEventID
      */
     private UIEventType type;
-    /**
-     * 事件数据MAP，也可以直接把事件数据以KEY的形式放入MAP中，处理事件时按KEY读取出来，编程时要确保KEY一致
-     */
-    private Map<String, Object> data=new HashMap<String, Object>();
 
     public UIEvent(UIEventType type) {
         this.type = type;
@@ -50,12 +46,6 @@ public class UIEvent extends EventBase implements Serializable {
         this.target = target;
     }
 
-    public UIEvent(UIEventType type, Object target, Map<String, Object> data) {
-        this.type = type;
-        this.target = target;
-        this.data = data;
-    }
-
     public UIEventType getType() {
         return type;
     }
@@ -64,23 +54,4 @@ public class UIEvent extends EventBase implements Serializable {
         this.type = type;
     }
 
-    public void putData(String key, Object value) {
-        this.data.put(key, value);
-    }
-
-    public boolean hasData(String key) {
-        return this.data.containsKey(key);
-    }
-
-    public <T> T getData(String key) {
-        return (T) this.data.get(key);
-    }
-
-    public Map<String, Object> getDataExt() {
-        return data;
-    }
-
-    public void setData(Map<String, Object> data) {
-        this.data = data;
-    }
 }

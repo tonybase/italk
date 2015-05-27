@@ -177,8 +177,7 @@ public class GetFriendRequestFrame extends IMFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 broadcastUIEvent(UIEventType.REFUSE_FRIEND_REQUEST,friendRequestId);
-
-
+                dispose();
             }
         });
         acceptBtn.addActionListener(new ActionListener() {
@@ -190,6 +189,7 @@ public class GetFriendRequestFrame extends IMFrame {
                 map.put("receiver_category_id", category.getId());
                 map.put("buddy_request_id",friendRequestId);
                 broadcastUIEvent(UIEventType.ACCEPT_FRIEND_REQUEST, map);
+                dispose();
             }
         });
         return chooseCatePanel;

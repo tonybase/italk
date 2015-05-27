@@ -314,8 +314,10 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
         for (int i = 0; i < categories.size(); i++) {
             JsonObject cate = categories.get(i).getAsJsonObject();
             IMBuddyCategory buddyCategory = new IMBuddyCategory();
+            buddyCategory.setId(cate.get("id").getAsString());
             buddyCategory.setName(cate.get("name").getAsString());
             if (cate.get("buddies").isJsonNull()) {
+                imCategories.add(buddyCategory);
                 continue;
             }
             JsonArray buddiesJson = cate.get("buddies").getAsJsonArray();

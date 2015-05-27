@@ -21,6 +21,8 @@ import iqq.app.ui.renderer.node.BuddyNode;
 import iqq.app.ui.renderer.node.CategoryNode;
 import iqq.app.ui.renderer.node.EntityNode;
 import iqq.app.ui.renderer.node.RoomNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -46,6 +48,8 @@ import java.util.List;
  * License  : Apache License 2.0
  */
 public class MiddlePanel extends IMPanel {
+    private Logger logger = LoggerFactory.getLogger(MiddlePanel.class);
+
     private MainFrame frame;
     private WebTabbedPane mainTab;
     /**
@@ -232,6 +236,7 @@ public class MiddlePanel extends IMPanel {
     }
 
     public void updateBuddyList(List<IMBuddyCategory> imCategories) {
+        logger.debug("updateBuddyList " + imCategories);
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
         BufferedImage defaultAvatar = getDefaultAvatar();
         for (IMBuddyCategory cate : imCategories) {
@@ -312,6 +317,19 @@ public class MiddlePanel extends IMPanel {
                     buddyNode.setAvatar(imUser.getAvatarBuffered());
                     model.reload(buddyNode);
                 }
+            }
+        }
+    }
+
+    public void addNewBuddy(String category_id, IMBuddy buddy) {
+        logger.debug("category_id=" + category_id + " buddy=" + buddy);
+
+        DefaultTreeModel model = (DefaultTreeModel) contactsTree.getModel();
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+        for (int i = 0; i < root.getChildCount(); i++) {
+            CategoryNode categoryNode = (CategoryNode) root.getChildAt(i);
+            if (categoryNode.getCategory().getId().equals(category_id)) {
+                categoryNode.add(new BuddyNode(buddy));
             }
         }
     }

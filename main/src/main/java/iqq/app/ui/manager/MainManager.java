@@ -1,6 +1,5 @@
 package iqq.app.ui.manager;
 
-import com.alee.laf.optionpane.WebOptionPane;
 import com.alee.utils.SystemUtils;
 import iqq.api.bean.IMBuddy;
 import iqq.api.bean.IMEntity;
@@ -15,7 +14,6 @@ import iqq.app.ui.event.UIEventHandler;
 import iqq.app.ui.event.UIEventType;
 import iqq.app.ui.frame.MainFrame;
 import iqq.app.util.UIUtils;
-import iqq.app.util.gson.GsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -77,7 +75,7 @@ public class MainManager {
         if (flashQueue == null) return;
 
         IMEntity entity = (IMEntity) event.getTarget();
-        entity.setAttachment(event.getDataExt());
+        entity.setAttachment(event.getDataEx());
         if (flashQueue.contains(entity)) {
             flashQueue.remove(entity);
         }
@@ -168,15 +166,16 @@ public class MainManager {
                         logger.debug("MouseEvent " + e.getButton() + " " + e.getClickCount());
                         //弹出左键菜单
                         if (e.getButton() == MouseEvent.BUTTON1) {
-                            Map<String, Object> data = (Map<String, Object>) flashOwner.getAttachment();
-                            if (data != null && data.containsKey("action") && data.get("action").equals("ADD_BUDDY_REQUEST")) {
-                                IMContext.getBean(FrameManager.class).showGetFriendRequest((IMBuddy) flashOwner, data.get("buddy_request_id").toString());
-                                eventService.broadcast(new UIEvent(UIEventType.FLASH_USER_STOP, flashOwner));
-                                return;
-                            }
-                            // 存在未读消息，点击显示
                             if (flashOwner != null) {
-                                chatManager.addChat(flashOwner);
+                                Map<String, Object> data = (Map<String, Object>) flashOwner.getAttachment();
+                                if (data != null && data.containsKey("action") && data.get("action").equals("ADD_BUDDY_REQUEST")) {
+                                    IMContext.getBean(FrameManager.class).showGetFriendRequest((IMBuddy) flashOwner, data.get("buddy_request_id").toString());
+                                    eventService.broadcast(new UIEvent(UIEventType.FLASH_USER_STOP, flashOwner));
+                                    return;
+                                } else {
+                                    // 存在未读消息，点击显示
+                                    chatManager.addChat(flashOwner);
+                                }
                             } else {
                                 show();
                             }

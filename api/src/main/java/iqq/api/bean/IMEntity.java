@@ -17,6 +17,8 @@ public class IMEntity implements Serializable {
     private String avatar;
     private BufferedImage avatarBuffered;
 
+    private Object attachment;
+
     public String getId() {
         return id;
     }
@@ -57,6 +59,14 @@ public class IMEntity implements Serializable {
         this.avatarBuffered = avatarBuffered;
     }
 
+    public Object getAttachment() {
+        return attachment;
+    }
+
+    public void setAttachment(Object attachment) {
+        this.attachment = attachment;
+    }
+
     @Override
     public String toString() {
         return "IMEntity{" +
@@ -66,5 +76,21 @@ public class IMEntity implements Serializable {
                 ", avatar='" + avatar + '\'' +
                 ", avatarBuffered=" + avatarBuffered +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        IMEntity entity = (IMEntity) o;
+
+        return id.equals(entity.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }

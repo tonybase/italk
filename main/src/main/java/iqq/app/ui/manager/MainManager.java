@@ -48,8 +48,8 @@ public class MainManager {
     private Image flashImage;    //当前闪动的头像
     private Image defaultImage;    //默认头像
     private Image blankImage;    //空白的头像
-    private FlashEvent flashOwner;    //当前闪烁的用户
-    private Deque<FlashEvent> flashQueue;    //带闪烁的对象列表
+    private IMEntity flashOwner;    //当前闪烁的用户
+    private Deque<IMEntity> flashQueue;    //带闪烁的对象列表
 
     @Resource
     private ChatManager chatManager;
@@ -75,29 +75,34 @@ public class MainManager {
     @UIEventHandler(UIEventType.FLASH_USER_START)
     protected void processIMFlashUserStart(UIEvent event) {
         if (flashQueue == null) return;
-        if (flashQueue.contains(event.getTarget())) {
-            flashQueue.remove(event.getTarget());
+
+        IMEntity entity = (IMEntity) event.getTarget();
+        entity.setAttachment(event.getDataExt());
+        if (flashQueue.contains(entity)) {
+            flashQueue.remove(entity);
         }
-        if (flashOwner != null && flashOwner != event.getTarget()) {
-            flashQueue.addFirst(new FlashEvent((IMEntity) event.getTarget(), event.getDataExt()));
+        if (flashOwner != null && flashOwner != entity) {
+            flashQueue.addFirst(flashOwner);
         }
-        flashOwner = new FlashEvent((IMEntity) event.getTarget(), event.getDataExt());
-        flashImage = getTrayFace(flashOwner.getEntity());
+        flashOwner = entity;
+        flashImage = getTrayFace(entity);
         flashTimer.run();
     }
 
     @UIEventHandler(UIEventType.FLASH_USER_STOP)
     protected void processIMFlashUserStop(UIEvent event) {
         if (flashQueue == null) return;
+
+        IMEntity entity = (IMEntity) event.getTarget();
         if (flashQueue.isEmpty()) {
             flashOwner = null;
             flashImage = null;
             icon.setImage(defaultImage);
-        } else if (flashOwner != event.getTarget()) {
+        } else if (flashOwner != entity) {
             flashQueue.remove(flashOwner);
         } else {
             flashOwner = flashQueue.poll();
-            flashImage = getTrayFace(flashOwner.getEntity());
+            flashImage = getTrayFace(flashOwner);
             flashTimer.run();
         }
     }
@@ -163,14 +168,15 @@ public class MainManager {
                         logger.debug("MouseEvent " + e.getButton() + " " + e.getClickCount());
                         //弹出左键菜单
                         if (e.getButton() == MouseEvent.BUTTON1) {
-
-                            if (flashOwner.hasData("action") && flashOwner.getData("action").equals("ADD_BUDDY_REQUEST")) {
-                                IMContext.getBean(FrameManager.class).showGetFriendRequest((IMBuddy) flashOwner.getEntity(), flashOwner.getData("buddy_request_id"));
+                            Map<String, Object> data = (Map<String, Object>) flashOwner.getAttachment();
+                            if (data != null && data.containsKey("action") && data.get("action").equals("ADD_BUDDY_REQUEST")) {
+                                IMContext.getBean(FrameManager.class).showGetFriendRequest((IMBuddy) flashOwner, data.get("buddy_request_id").toString());
+                                eventService.broadcast(new UIEvent(UIEventType.FLASH_USER_STOP, flashOwner));
                                 return;
                             }
                             // 存在未读消息，点击显示
-                            if (!flashOwner.hasData("action")) {
-                                chatManager.addChat(flashOwner.getEntity());
+                            if (flashOwner != null) {
+                                chatManager.addChat(flashOwner);
                             } else {
                                 show();
                             }
@@ -207,33 +213,4 @@ public class MainManager {
         }
     }
 
-    public class FlashEvent {
-        private IMEntity entity;
-        private Map<String, Object> data;
-
-        public FlashEvent(IMEntity entity, Map<String, Object> data) {
-            this.entity = entity;
-            this.data = data;
-        }
-
-        public IMEntity getEntity() {
-            return entity;
-        }
-
-        public void setEntity(IMEntity entity) {
-            this.entity = entity;
-        }
-
-        public void putData(String key, Object value) {
-            this.data.put(key, value);
-        }
-
-        public boolean hasData(String key) {
-            return this.data.containsKey(key);
-        }
-
-        public <T> T getData(String key) {
-            return (T) this.data.get(key);
-        }
-    }
 }

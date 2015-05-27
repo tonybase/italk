@@ -8,9 +8,14 @@ import com.alee.laf.combobox.WebComboBox;
 import com.alee.laf.label.WebLabel;
 import com.alee.laf.panel.WebPanel;
 import com.alee.laf.rootpane.WebFrame;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import iqq.api.bean.IMAccount;
 import iqq.api.bean.IMCategory;
+import iqq.app.api.IMResponse;
 import iqq.app.core.context.IMContext;
 import iqq.app.core.module.LogicModule;
+import iqq.app.core.service.HttpService;
 import iqq.app.core.service.SkinService;
 import iqq.app.ui.IMContentPane;
 import iqq.app.ui.IMFrame;
@@ -20,6 +25,9 @@ import iqq.app.ui.event.UIEventHandler;
 import iqq.app.ui.event.UIEventType;
 import iqq.app.ui.renderer.CategoryComboxCellRenderer;
 import iqq.app.util.UIUtils;
+import iqq.app.util.gson.GsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,6 +40,7 @@ import java.util.List;
  * Created by Tony on 5/18/15.
  */
 public class ChooseCategoryFrame extends IMFrame {
+    private Logger logger = LoggerFactory.getLogger(ChooseCategoryFrame.class);
     private IMContentPane contentPane = new IMContentPane();
     private WebPanel headerPanel = headerPanel();
     private WebPanel contentPanel = new WebPanel();
@@ -41,8 +50,36 @@ public class ChooseCategoryFrame extends IMFrame {
 
     public ChooseCategoryFrame(String buddyId) {
         friendId = buddyId;
-        String id = IMContext.getBean(LogicModule.class).getOwner().getId();
-        broadcastUIEvent(UIEventType.QUERY_CATEGORY_BY_USER_ID, id);
+
+        initUI();
+        initContent();
+        loadData();
+    }
+
+    private void loadData() {
+        IMAccount account = IMContext.getBean(LogicModule.class).getOwner();
+        getHttpService().doGet("http://127.0.0.1:8080/users/category/query?id=" + account.getId(), new HttpService.StringCallback() {
+            @Override
+            public void onSuccess(String content) {
+                logger.info(content);
+                IMResponse response = GsonUtils.fromJson(content, IMResponse.class);
+                JsonArray jsonArray = response.getData().get("categories").getAsJsonArray();
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
+                    IMCategory category = new IMCategory();
+                    category.setId(jsonObject.get("id").getAsString());
+                    category.setName(jsonObject.get("name").getAsString());
+                    categories.add(category);
+                }
+                contentPanel.add(chooseCatePanel());
+                contentPanel.revalidate();
+            }
+
+            @Override
+            public void onFailure(int statusCode, String content) {
+                logger.error("statusCode=" + statusCode + " " + content);
+            }
+        });
     }
 
     /**
@@ -76,8 +113,6 @@ public class ChooseCategoryFrame extends IMFrame {
         contentPane.add(headerPanel, BorderLayout.NORTH);
         contentPane.add(contentPanel, BorderLayout.CENTER);
         setIMContentPane(contentPane);
-
-        contentPanel.add(chooseCatePanel());
     }
 
     private WebPanel headerPanel() {
@@ -140,13 +175,6 @@ public class ChooseCategoryFrame extends IMFrame {
             }
         });
         return chooseCatePanel;
-    }
-
-    @UIEventHandler(UIEventType.QUERY_CATEGORY_BY_USER_ID_SUCCESS)
-    public void processQueryCategoryByUserId(UIEvent uiEvent) {
-        categories = (List<IMCategory>) uiEvent.getTarget();
-        initUI();
-        initContent();
     }
 
     @UIEventHandler(UIEventType.PUSH_FRIEND_REQUEST_RETURN)

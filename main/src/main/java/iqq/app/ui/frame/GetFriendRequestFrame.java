@@ -41,6 +41,7 @@ import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -64,13 +65,10 @@ public class GetFriendRequestFrame extends IMFrame {
     public GetFriendRequestFrame(IMBuddy buddy, String buddyRequestId) {
         this.buddy = buddy;
         this.friendRequestId = buddyRequestId;
-
         logger.info("friendRequestId=" + friendRequestId);
         logger.info(buddy.toString());
-
         initUI();
         initContent();
-
         loadData();
         loadData();
     }
@@ -90,7 +88,6 @@ public class GetFriendRequestFrame extends IMFrame {
                     category.setName(jsonObject.get("name").getAsString());
                     categories.add(category);
                 }
-
                 contentPanel.add(chooseCatePanel());
                 contentPanel.revalidate();
             }
@@ -155,8 +152,8 @@ public class GetFriendRequestFrame extends IMFrame {
 
         chooseCatePanel.setOpaque(true);
 
-        WebButton confirmBtn = new WebButton("接受");
-        WebButton cancelBtn = new WebButton("拒绝");
+        WebButton acceptBtn = new WebButton("接受");
+        WebButton refuseBtn = new WebButton("拒绝");
         WebLabel label = new WebLabel("好友分组:");
         label.setPreferredSize(60, 32);
 
@@ -166,9 +163,9 @@ public class GetFriendRequestFrame extends IMFrame {
             comboBox.addItem(category);
         }
         comboBox.setPreferredSize(80, 25);
-        confirmBtn.setPreferredSize(60, 30);
-        cancelBtn.setPreferredSize(60, 30);
-        GroupPanel buttons = new GroupPanel(10, true, confirmBtn, cancelBtn);
+        acceptBtn.setPreferredSize(60, 30);
+        refuseBtn.setPreferredSize(60, 30);
+        GroupPanel buttons = new GroupPanel(10, true, acceptBtn, refuseBtn);
         VerticalPanel verticalPanel = new VerticalPanel(label, comboBox);
         verticalPanel.setMargin(new Insets(10, 20, 20, 20));
         buttons.setMargin(10, 5, 0, 6);
@@ -176,26 +173,34 @@ public class GetFriendRequestFrame extends IMFrame {
         chooseCatePanel.add(treeScroll, BorderLayout.CENTER);
         chooseCatePanel.add(new AlignPanel(buttons, SwingConstants.RIGHT, SwingConstants.CENTER), BorderLayout.PAGE_END);
         chooseCatePanel.setMargin(6);
-        cancelBtn.addActionListener(new ActionListener() {
+        refuseBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dispose();
+                broadcastUIEvent(UIEventType.REFUSE_FRIEND_REQUEST,friendRequestId);
+
 
             }
         });
-        confirmBtn.addActionListener(new ActionListener() {
+        acceptBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                broadcastUIEvent(UIEventType.PUSH_FRIEND_REQUEST, map);
+                Object obj = comboBox.getSelectedItem();//返回当前所选的项。
+                IMCategory category = (IMCategory) obj;
+                Map map = new HashMap();
+                map.put("receiver_category_id", category.getId());
+                map.put("buddy_request_id",friendRequestId);
+                broadcastUIEvent(UIEventType.ACCEPT_FRIEND_REQUEST, map);
             }
         });
         return chooseCatePanel;
     }
 
-    @UIEventHandler(UIEventType.PUSH_FRIEND_REQUEST_RETURN)
-    public void processPushFriendRequest(UIEvent uiEvent) {
-        dispose();
-        contentPane.getParent();
+    @UIEventHandler(UIEventType.REFUSE_FRIEND_SUCCESS)
+    public void processRefuseFriendRequest(UIEvent uiEvent) {
+        this.dispose();
     }
-
+    @UIEventHandler(UIEventType.ACCEPT_FRIEND_SUCCESS)
+    public void processAcceptFriendRequest(UIEvent uiEvent) {
+        this.dispose();
+    }
 }

@@ -147,21 +147,14 @@ public class AddFriendModule {
         });
     }
 
-    @UIEventHandler(UIEventType.ADD_FRIEND_REQUEST)
+    @UIEventHandler(UIEventType.ACCEPT_FRIEND_REQUEST)
     private void pushFriendRequestAdd(UIEvent uiEvent) {
-        IMUser user = (IMUser) uiEvent.getTarget();
-        String cateId = uiEvent.getData("category_id");
-
-        Map<String, String> map = new HashMap<>();
-        map.put("user_id", user.getId());
-        map.put("category_id", cateId);
+        Map<String, String> map = (HashMap<String, String>) uiEvent.getTarget();
         httpService.doPost("http://127.0.0.1:8080/users/relation/add", map, new HttpService.StringCallback() {
             @Override
             public void onSuccess(String content) {
-                System.out.println(content);
-                eventService.broadcast(new UIEvent(UIEventType.ADD_FRIEND_SUCCESS, ""));
+                eventService.broadcast(new UIEvent(UIEventType.ACCEPT_FRIEND_SUCCESS, ""));
             }
-
             @Override
             public void onFailure(int statusCode, String content) {
                 logger.error("statusCode=" + statusCode + " " + content);
@@ -171,16 +164,16 @@ public class AddFriendModule {
 
     @UIEventHandler(UIEventType.REFUSE_FRIEND_REQUEST)
     private void pushFriendRequestRefuse(UIEvent uiEvent) {
-        IMUser user = (IMUser) uiEvent.getTarget();
-        String cateId = uiEvent.getData("category_id");
+        String buddyRequestId= (String) uiEvent.getTarget();
 
         Map<String, String> map = new HashMap<>();
-        map.put("user_id", user.getId());
-        map.put("category_id", cateId);
-        httpService.doPost("http://127.0.0.1:8080/users/relation/del", map, new HttpService.StringCallback() {
+        map.put("buddy_request_id", buddyRequestId);
+
+        httpService.doPost("http://127.0.0.1:8080/users/relation/refuse", map, new HttpService.StringCallback() {
             @Override
             public void onSuccess(String content) {
-                eventService.broadcast(new UIEvent(UIEventType.DELETE_FRIEND_SUCCESS, ""));
+                System.out.println(content);
+                eventService.broadcast(new UIEvent(UIEventType.REFUSE_FRIEND_SUCCESS, ""));
             }
 
             @Override

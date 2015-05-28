@@ -273,6 +273,8 @@ public class LogicModule implements AccountQuery, BuddyQuery, GroupQuery {
             buddy.setAvatar(jsonBuddy.get("avatar").getAsString());
             buddy.setAvatarBuffered(UIUtils.getBufferedImage(jsonBuddy.get("avatar").getAsString()));
             buddy.setStatus(IMStatus.valueOfRaw(jsonBuddy.get("status").getAsInt()));
+            buddies.add(buddy);
+
             UIEvent uiEvent=new UIEvent(UIEventType.ACCEPT_FRIEND_SUCCESS, buddy);
             uiEvent.putData("category_id",category_id);
             eventService.broadcast(uiEvent);

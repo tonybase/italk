@@ -70,7 +70,6 @@ public class GetFriendRequestFrame extends IMFrame {
         initUI();
         initContent();
         loadData();
-        loadData();
     }
 
     private void loadData() {

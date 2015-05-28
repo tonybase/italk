@@ -100,6 +100,9 @@ public abstract class BasicPanel extends IMPanel {
         // 加载接收到的消息
         List<IMMsg> msgs = IMContext.getBean(MsgModule.class).getMsgs(entity.getId());
         for (IMMsg msg : msgs) {
+            if (msg.getState() == IMMsg.State.UNREAD) {
+                msg.setState(IMMsg.State.READ);
+            }
             showMsg(msg);
         }
     }

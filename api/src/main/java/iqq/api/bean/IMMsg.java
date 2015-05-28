@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * 聊天消息
- * <p>
+ * <p/>
  * Project  : iqq-projects
  * Author   : 承∮诺 < 6208317@qq.com >
  * Created  : 14-5-15

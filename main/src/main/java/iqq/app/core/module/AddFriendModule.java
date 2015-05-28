@@ -149,12 +149,7 @@ public class AddFriendModule {
 
     @UIEventHandler(UIEventType.ACCEPT_FRIEND_REQUEST)
     private void pushFriendRequestAdd(UIEvent uiEvent) {
-        String receiver_category_id = uiEvent.getString("receiver_category_id");
-        String buddy_request_id = uiEvent.getString("buddy_request_id");
-
-        Map<String, String> map = new HashMap<>();
-        map.put("receiver_category_id", receiver_category_id);
-        map.put("buddy_request_id", buddy_request_id);
+        Map<String, String> map = (HashMap<String, String>) uiEvent.getTarget();
         httpService.doPost("http://127.0.0.1:8080/users/relation/add", map, new HttpService.StringCallback() {
             @Override
             public void onSuccess(String content) {
@@ -169,9 +164,7 @@ public class AddFriendModule {
                 buddy.setStatus((IMStatus.valueOfRaw(jsonObject.get("status").getAsInt())));
                 buddy.setAvatarBuffered(UIUtils.getDefaultAvatarBuffer());
 
-                UIEvent event = new UIEvent(UIEventType.ACCEPT_FRIEND_SUCCESS, buddy);
-                event.putData("category_id", receiver_category_id);
-                eventService.broadcast(event);
+                String category_id = response.getData().get("category_id").getAsString();
             }
 
             @Override
@@ -192,7 +185,6 @@ public class AddFriendModule {
             @Override
             public void onSuccess(String content) {
                 System.out.println(content);
-                eventService.broadcast(new UIEvent(UIEventType.REFUSE_FRIEND_SUCCESS, ""));
             }
 
             @Override

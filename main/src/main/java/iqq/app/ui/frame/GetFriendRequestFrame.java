@@ -185,23 +185,14 @@ public class GetFriendRequestFrame extends IMFrame {
             public void actionPerformed(ActionEvent e) {
                 Object obj = comboBox.getSelectedItem();//返回当前所选的项。
                 IMCategory category = (IMCategory) obj;
-                UIEvent event = new UIEvent(UIEventType.ACCEPT_FRIEND_REQUEST, null);
-                event.putData("receiver_category_id", category.getId());
-                event.putData("buddy_request_id", friendRequestId);
+                Map<String,String> map = new HashMap<String, String>();
+                map.put("receiver_category_id", category.getId());
+                map.put("buddy_request_id", friendRequestId);
+                UIEvent event = new UIEvent(UIEventType.ACCEPT_FRIEND_REQUEST, map);
                 broadcastUIEvent(event);
                 dispose();
             }
         });
         return chooseCatePanel;
-    }
-
-    @UIEventHandler(UIEventType.REFUSE_FRIEND_SUCCESS)
-    public void processRefuseFriendRequest(UIEvent uiEvent) {
-        this.dispose();
-    }
-
-    @UIEventHandler(UIEventType.ACCEPT_FRIEND_SUCCESS)
-    public void processAcceptFriendRequest(UIEvent uiEvent) {
-        this.dispose();
     }
 }

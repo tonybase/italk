@@ -153,18 +153,7 @@ public class AddFriendModule {
         httpService.doPost("http://127.0.0.1:8080/users/relation/add", map, new HttpService.StringCallback() {
             @Override
             public void onSuccess(String content) {
-                logger.debug(content);
-                IMResponse response = IMResponse.parseJson(content);
-                JsonObject jsonObject = response.getData().get("user").getAsJsonObject();
-                IMBuddy buddy = new IMBuddy();
-                buddy.setId(jsonObject.get("id").getAsString());
-                buddy.setNick(jsonObject.get("nick").getAsString());
-                buddy.setSign(jsonObject.get("sign").getAsString());
-                buddy.setAvatar(jsonObject.get("avatar").getAsString());
-                buddy.setStatus((IMStatus.valueOfRaw(jsonObject.get("status").getAsInt())));
-                buddy.setAvatarBuffered(UIUtils.getDefaultAvatarBuffer());
-
-                String category_id = response.getData().get("category_id").getAsString();
+                System.out.println(content);
             }
 
             @Override

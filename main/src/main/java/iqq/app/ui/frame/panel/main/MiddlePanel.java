@@ -330,6 +330,7 @@ public class MiddlePanel extends IMPanel {
             CategoryNode categoryNode = (CategoryNode) root.getChildAt(i);
             if (categoryNode.getCategory().getId().equals(category_id)) {
                 categoryNode.add(new BuddyNode(buddy));
+                model.reload(categoryNode);
             }
         }
     }

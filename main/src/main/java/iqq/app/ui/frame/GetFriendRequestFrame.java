@@ -176,7 +176,7 @@ public class GetFriendRequestFrame extends IMFrame {
         refuseBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                broadcastUIEvent(UIEventType.REFUSE_FRIEND_REQUEST,friendRequestId);
+                broadcastUIEvent(UIEventType.REFUSE_FRIEND_REQUEST, friendRequestId);
                 dispose();
             }
         });
@@ -185,10 +185,10 @@ public class GetFriendRequestFrame extends IMFrame {
             public void actionPerformed(ActionEvent e) {
                 Object obj = comboBox.getSelectedItem();//返回当前所选的项。
                 IMCategory category = (IMCategory) obj;
-                Map map = new HashMap();
-                map.put("receiver_category_id", category.getId());
-                map.put("buddy_request_id",friendRequestId);
-                broadcastUIEvent(UIEventType.ACCEPT_FRIEND_REQUEST, map);
+                UIEvent event = new UIEvent(UIEventType.ACCEPT_FRIEND_REQUEST, null);
+                event.putData("receiver_category_id", category.getId());
+                event.putData("buddy_request_id", friendRequestId);
+                broadcastUIEvent(event);
                 dispose();
             }
         });
@@ -199,6 +199,7 @@ public class GetFriendRequestFrame extends IMFrame {
     public void processRefuseFriendRequest(UIEvent uiEvent) {
         this.dispose();
     }
+
     @UIEventHandler(UIEventType.ACCEPT_FRIEND_SUCCESS)
     public void processAcceptFriendRequest(UIEvent uiEvent) {
         this.dispose();
